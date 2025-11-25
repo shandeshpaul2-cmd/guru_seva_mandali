@@ -1,0 +1,121 @@
+HX7d73f53b0b8bf7f10db1fcc42077834b :
+"""
+New Donation Alert
+
+A new donation transaction has been recorded in the system and requires your attention.
+
+Donor Name: {{1}}
+Contact Number: {{2}}
+Donation Amount: ₹{{3}}
+Receipt Number: {{4}}
+Transaction Date: {{5}}
+
+Please review this transaction in your admin dashboard to process any required follow-up actions. Transaction requires attention.
+"""
+
+HX1388696a0f65a895cb2fe1375bb7106b : 
+"""
+Astrology Consultation Appointment Confirmation
+
+This message confirms your astrology consultation appointment has been scheduled in our system.
+
+Client Name: {{1}}
+Consultation Type: {{2}}
+Appointment Date: {{3}}
+Appointment Reference: {{4}}
+
+Your astrology consultation appointment has been scheduled successfully. Please arrive at the scheduled time.
+
+For any questions or clarifications regarding this appointment, please contact {{5}} for assistance.
+"""
+
+HX1a027bd413231f75b41abfe0871f1dd4 :
+"""
+Parihara Service Booking Confirmation
+
+This message confirms your parihara service booking has been recorded in our system.
+
+Devotee Name: {{1}}
+Parihara Service: {{2}}
+Scheduled Date: {{3}}
+Booking Reference: {{4}}
+
+Your parihara service booking has been recorded successfully. Please arrive at the scheduled time.
+
+For any questions or clarifications regarding this booking, please contact {{5}} for assistance.
+"""
+
+HXa46abe3172c026860eef028e607f47f9 :
+"""
+This message confirms your pooja service booking has been recorded in our system.
+
+Devotee Name: {{1}}
+Pooja Service: {{2}}
+Scheduled Date: {{3}}
+Booking Reference: {{4}}
+
+Your pooja booking has been recorded successfully. Please arrive at the scheduled time.
+
+For any questions or clarifications regarding this booking, please contact {{5}} for assistance.
+"""
+
+HX6342f16964029de4a04d3e0e63ca52f1 :
+"""
+New Pooja Booking Alert
+
+A new pooja service booking has been recorded in the system and requires your attention.
+
+Devotee Name: {{1}}
+Contact Number: {{2}}
+Pooja Service: {{3}}
+Scheduled Date: {{4}}
+Booking Reference: {{5}}
+
+Please review this booking in your admin dashboard to coordinate the service arrangements. Booking requires attention.
+"""
+
+HX4d4c034204e861d4e9291f2e5e76b21c :
+"""
+Donation Receipt Confirmation
+
+This message confirms your donation transaction has been recorded in our system.
+
+Donor Name: {{1}}
+Donation Amount: ₹{{2}}
+Receipt Number: {{3}}
+Transaction Date: {{4}}
+
+Your donation has been processed successfully. Receipt is available for download.
+
+For any questions or clarifications regarding this transaction, please contact {{5}} for assistance.
+"""
+
+HX0f0edb161d6f40ae35835411340785aa :
+"""
+New Astrology Consultation Appointment Alert
+
+A new astrology consultation appointment has been scheduled in the system and requires your attention.
+
+Client Name: {{1}}
+Contact Number: {{2}}
+Consultation Type: {{3}}
+Appointment Date: {{4}}
+Appointment Reference: {{5}}
+
+Please review this appointment in your admin dashboard to coordinate the consultation arrangements. Appointment requires attention.
+"""
+
+HXaf62d2c514aad28f1e42badc3af480f7 :
+"""
+New Parihara Service Booking Alert
+
+A new parihara service booking has been recorded in the system and requires your attention.
+
+Devotee Name: {{1}}
+Contact Number: {{2}}
+Parihara Service: {{3}}
+Scheduled Date: {{4}}
+Booking Reference: {{5}}
+
+Please review this booking in your admin dashboard to coordinate the service arrangements. Booking requires attention.
+"""

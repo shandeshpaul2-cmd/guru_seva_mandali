@@ -1,0 +1,224 @@
+// Temple Management System - Prisma Schema
+// PostgreSQL for production deployment
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// 1. USER MANAGEMENT (Simplified for current use)
+// ============================================================
+
+model User {
+  id            String   @id @default(cuid())
+  email         String?  @unique
+  phone         String   @unique
+  name          String
+  isAnonymous   Boolean  @default(true)
+
+  // Profile Information
+  address       String?
+  city          String?
+  state         String?
+  pincode       String?
+  nakshatra     String?
+  gothra        String?
+
+  // Metadata
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  donations     Donation[]
+  poojaBookings PoojaBooking[]
+
+  @@map("users")
+}
+
+// ============================================================
+// 2. DONATIONS MODULE (Enhanced but SQLite compatible)
+// ============================================================
+
+model Donation {
+  id            String   @id @default(cuid())
+  receiptNumber String   @unique
+  userId        String?
+
+  // Donation Details
+  amount        Float
+  donationType  String   @default("General")
+  donationPurpose String?
+
+  // Payment Details
+  paymentStatus     String   @default("PENDING")
+  paymentMethod     String   @default("razorpay")
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  razorpaySignature String?
+
+  // Receipt & Delivery
+  receiptPdfUrl     String?
+  whatsappSent      Boolean  @default(false)
+  whatsappSentAt    DateTime?
+  emailSent         Boolean  @default(false)
+  emailSentAt       DateTime?
+
+  // Analytics & Tracking
+  utmSource         String?
+  utmMedium         String?
+  utmCampaign       String?
+  ipAddress         String?
+  userAgent         String?
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("donations")
+}
+
+// ============================================================
+// 3. POOJA BOOKING MODULE (Enhanced but SQLite compatible)
+// ============================================================
+
+model PoojaService {
+  id              Int      @id @default(autoincrement())
+  poojaName       String
+  poojaNameKannada String?
+  poojaNameHindi   String?
+  description     String?
+  price           Float
+  durationMinutes Int      @default(60)
+  isActive        Boolean  @default(true)
+  displayOrder    Int      @default(0)
+  imageUrl        String?
+
+  // Enhanced scheduling options
+  maxBookingsPerSlot Int    @default(5)
+  requiresAdvanceNotice Boolean @default(true)
+  advanceNoticeHours Int @default(24)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  bookings PoojaBooking[]
+
+  @@map("pooja_services")
+}
+
+model PoojaBooking {
+  id            String   @id @default(cuid())
+  bookingNumber String   @unique
+  receiptNumber String?  @unique
+  userId        String?
+
+  // User Information (denormalized for performance)
+  userName      String
+  userPhone     String
+  userEmail     String?
+  nakshatra     String?
+  gothra        String?
+
+  // Pooja Details
+  poojaId       Int?
+  poojaName     String
+  poojaPrice    Float
+
+  // Scheduling
+  preferredDate DateTime?
+  preferredTime String?
+  confirmedDate DateTime?
+  confirmedTime String?
+  specialInstructions String?
+
+  // Payment Details
+  paymentStatus     String    @default("PENDING")
+  paymentMethod     String?
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  razorpaySignature String?
+
+  // Booking Status & Workflow
+  bookingStatus            String    @default("PENDING")
+  userConfirmationSent     Boolean   @default(false)
+  userConfirmationSentAt   DateTime?
+  adminNotificationSent    Boolean   @default(false)
+  adminNotificationSentAt  DateTime?
+  confirmedByAdminId       String?
+  confirmedByAdminAt       DateTime?
+  completedAt              DateTime?
+  cancellationReason       String?
+  cancelledAt              DateTime?
+
+  // Analytics
+  utmSource         String?
+  ipAddress         String?
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user        User?        @relation(fields: [userId], references: [id])
+  poojaService PoojaService? @relation(fields: [poojaId], references: [id])
+
+  @@map("pooja_bookings")
+}
+
+// ============================================================
+// 4. RECEIPT SEQUENCES
+// ============================================================
+
+model ReceiptSequence {
+  fiscalYear   String @id
+  lastSequence Int    @default(0)
+
+  @@map("receipt_sequence")
+}
+
+model BookingSequence {
+  fiscalYear   String @id
+  lastSequence Int    @default(0)
+
+  @@map("booking_sequence")
+}
+
+model DailySequence {
+  id           String @id @default(cuid())
+  type         String // 'BOOKING' or 'DONATION'
+  date         String // DDMMYY format
+  lastSequence Int    @default(0)
+
+  @@unique([type, date])
+  @@map("daily_sequence")
+}
+
+// ============================================================
+// 5. AUDIT LOGS (Simplified for SQLite)
+// ============================================================
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  tableName String
+  recordId  String
+  oldValues String?  // JSON as string for SQLite compatibility
+  newValues String?  // JSON as string for SQLite compatibility
+  userId    String?
+  ipAddress String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}

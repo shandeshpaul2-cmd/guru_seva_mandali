@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+
+:root {
+  --temple-maroon: #8B0000;
+  --temple-gold: #DAA520;
+  --temple-cream: #FFF8DC;
+  --temple-orange: #FF8C42;
+  --bg-light: #F9FAFB;
+  --text-dark: #111827;
+  --text-gray: #6B7280;
+  --success: #10B981;
+  --error: #EF4444;
+  --warning: #F59E0B;
+  --info: #3B82F6;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--text-dark);
+  background: linear-gradient(135deg, var(--temple-cream) 0%, #FFFFFF 100%);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--temple-cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--temple-gold);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--temple-maroon);
+}
+
+/* Temple-themed utility classes */
+.temple-gradient {
+  background: linear-gradient(135deg, var(--temple-maroon), #A52A2A);
+}
+
+.temple-gold-gradient {
+  background: linear-gradient(135deg, var(--temple-gold), #FFD700);
+}
+
+.temple-card {
+  @apply bg-white rounded-2xl shadow-lg border-2 border-transparent transition-all duration-300;
+}
+
+.temple-card:hover {
+  @apply border-temple-gold transform -translate-y-2 shadow-2xl;
+}
+
+.temple-button {
+  @apply px-8 py-3 rounded-full font-semibold text-white temple-gradient transition-all duration-300 hover:scale-105 hover:shadow-xl;
+}
+
+.temple-input {
+  @apply w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-temple-gold focus:outline-none focus:ring-2 focus:ring-temple-gold/20 transition-all;
+}
+
+.temple-heading {
+  @apply font-cinzel font-bold text-temple-maroon;
+}
+
+/* Loading animation */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  @apply border-4 border-temple-cream border-t-temple-maroon rounded-full w-12 h-12 animate-spin;
+}
+
+/* Om symbol pulse animation */
+@keyframes pulse-om {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.om-symbol {
+  animation: pulse-om 3s ease-in-out infinite;
+}
+
+/* Smooth transitions for route changes */
+.page-transition {
+  @apply transition-all duration-300 ease-in-out;
+}
