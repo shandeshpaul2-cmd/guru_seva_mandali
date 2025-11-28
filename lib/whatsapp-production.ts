@@ -976,21 +976,23 @@ For any queries, please contact: ${this.adminPhoneNumber}
 
       const formattedAmount = amount.toLocaleString('en-IN');
 
-      // PDF attachments - handle both public URLs and base64 encoded PDFs
+      // Certificate link - use on-demand generation URL
       let twilioMediaUrl: string | undefined = undefined;
 
       // Check if we're in localhost/development mode
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
       const isLocalhost = baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1');
 
-      if (pdfUrl && !pdfUrl.includes('localhost') && !pdfUrl.includes('127.0.0.1')) {
-        // Use provided URL if it's publicly accessible (not localhost)
-        twilioMediaUrl = pdfUrl;
-        this.log('info', '📎 Attaching certificate PDF from public URL', { pdfUrl });
+      if (!isLocalhost) {
+        // PRODUCTION: Use on-demand certificate URL (professional, permanent link)
+        // This URL generates the PDF when the user clicks it
+        twilioMediaUrl = `${baseUrl}/api/certificate/${receiptNumber}`;
+        this.log('info', '📎 Using on-demand certificate URL (production)', {
+          certificateUrl: twilioMediaUrl
+        });
       } else if (pdfBase64) {
-        // Always try to upload PDF to temporary file hosting service
-        // This works even from localhost since we're uploading to an external service
-        this.log('info', '📤 Uploading base64 PDF to temporary file hosting for attachment');
+        // LOCALHOST: Upload PDF to temporary file hosting (Twilio can't access localhost)
+        this.log('info', '📤 Localhost detected - uploading PDF to temporary hosting');
         try {
           const uploadedMediaUrl = await this.uploadPdfToTwilio(pdfBase64, `${receiptNumber}.pdf`);
           if (uploadedMediaUrl) {
@@ -1042,17 +1044,18 @@ For any queries, please contact: ${this.adminPhoneNumber}
       // Strategy: Try template with PDF link first (works outside 24h window)
       // If that fails, fall back to regular template + separate PDF message
       let receiptResult: { success: boolean; messageId?: string; error?: string };
+      let usedCertLinkTemplate = false; // Track if we used the template with built-in cert link
 
-      // Check if we have the new template with PDF link configured and we have a PDF URL
+      // Check if we have the new template with PDF link configured
       const hasCertLinkTemplate = !!process.env.TWILIO_TEMPLATE_DONATION_CERT_LINK &&
                                    !process.env.TWILIO_TEMPLATE_DONATION_CERT_LINK.startsWith('HXxxxx');
 
       if (hasCertLinkTemplate && twilioMediaUrl) {
-        // Try template with PDF download link (6 variables: name, amount, receipt, date, pdfUrl, contact)
-        this.log('info', '📨 Attempting to send template with certificate link', {
+        // Use new template with PDF download link (6 variables: name, amount, receipt, date, certLink, contact)
+        this.log('info', '📨 Sending donation template with certificate link', {
           to: donorPhone,
           templateKey: 'DONATION_CERTIFICATE_LINK',
-          pdfUrl: twilioMediaUrl
+          certLink: twilioMediaUrl
         });
 
         const certLinkVariables: WhatsAppTemplateVariable = {
@@ -1060,7 +1063,7 @@ For any queries, please contact: ${this.adminPhoneNumber}
           amount: formattedAmount,
           receiptNumber,
           date: formattedDate,
-          pdfUrl: twilioMediaUrl,
+          certLink: twilioMediaUrl,
           contact: this.adminPhoneNumber
         };
 
@@ -1071,55 +1074,48 @@ For any queries, please contact: ${this.adminPhoneNumber}
         );
 
         if (receiptResult.success) {
-          this.log('info', '✅ Template with certificate link sent successfully', {
+          usedCertLinkTemplate = true; // Certificate link is already in the template
+          this.log('info', '✅ Donation template with certificate link sent successfully', {
             messageId: receiptResult.messageId
           });
         } else {
-          this.log('warn', `⚠️ Certificate link template failed (${receiptResult.error}), trying regular template`);
+          this.log('warn', `⚠️ Certificate link template failed (${receiptResult.error}), will fall back to regular message`);
         }
-      }
+      } else if (hasCertLinkTemplate && !twilioMediaUrl) {
+        // Template requires certificate link but we don't have one - skip template, use fallback
+        this.log('warn', '⚠️ Certificate link template configured but no PDF URL available - using fallback');
+        receiptResult = { success: false, error: 'No certificate URL available for template' };
+      } else {
+        // No cert link template configured - check for legacy V2/V3 template
+        const hasV2Template = !!process.env.TWILIO_TEMPLATE_DONATION_RECEIPT_V2 &&
+                              !process.env.TWILIO_TEMPLATE_DONATION_RECEIPT_V2.startsWith('HXxxxx');
 
-      // If cert link template wasn't used or failed, use regular template
-      if (!receiptResult! || !receiptResult.success) {
-        // Check if using V2/V3 (5 variables) or V1 (7 variables)
-        const isV2OrV3 = !!process.env.TWILIO_TEMPLATE_DONATION_RECEIPT_V2;
-
-        let receiptVariables: WhatsAppTemplateVariable;
-
-        if (isV2OrV3) {
-          // V2/V3: 5 variables - Name, Amount, Receipt, Date, Contact
-          receiptVariables = {
+        if (hasV2Template) {
+          // Legacy V2/V3: 5 variables - Name, Amount, Receipt, Date, Contact
+          const receiptVariables: WhatsAppTemplateVariable = {
             donorName,
             amount: formattedAmount,
             receiptNumber,
             date: formattedDate,
             contact: this.adminPhoneNumber
           };
+
+          this.log('info', '📨 Sending legacy donation receipt template (V2)', {
+            to: donorPhone,
+            templateKey: 'DONATION_RECEIPT_WITH_CERTIFICATE',
+            variables: receiptVariables
+          });
+
+          receiptResult = await this.sendTemplateMessage(
+            donorPhone,
+            'DONATION_RECEIPT_WITH_CERTIFICATE',
+            receiptVariables
+          );
         } else {
-          // V1: 7 variables - Name, Amount, Receipt, Type, Date, Temple, Admin Phone
-          receiptVariables = {
-            donorName,
-            amount: formattedAmount,
-            receiptNumber,
-            donationType,
-            date: formattedDate,
-            templeName: this.templeName,
-            adminPhone: this.adminPhoneNumber
-          };
+          // No templates configured - will use fallback
+          this.log('warn', '⚠️ No donation templates configured - using fallback');
+          receiptResult = { success: false, error: 'No donation templates configured' };
         }
-
-        this.log('info', '📨 Attempting to send donation receipt template', {
-          to: donorPhone,
-          templateKey: 'DONATION_RECEIPT_WITH_CERTIFICATE',
-          variables: receiptVariables,
-          hasMediaUrl: !!twilioMediaUrl
-        });
-
-        receiptResult = await this.sendTemplateMessage(
-          donorPhone,
-          'DONATION_RECEIPT_WITH_CERTIFICATE',
-          receiptVariables
-        );
       }
 
       this.log('info', '📨 Template send result:', {
@@ -1182,10 +1178,12 @@ For any queries, please contact: ${this.adminPhoneNumber}
         });
       }
 
-      // Send PDF as a separate message (WhatsApp templates don't support dynamic media)
+      // Send PDF as a separate message ONLY if we didn't use the cert link template
+      // (The cert link template already includes the download link in the message)
       let certificateLinkMessageId: string | undefined = undefined;
-      if (twilioMediaUrl && receiptResult.success) {
-        this.log('info', '📤 Sending PDF certificate as separate message', { mediaUrl: twilioMediaUrl });
+      if (twilioMediaUrl && receiptResult.success && !usedCertLinkTemplate) {
+        // Only send separate PDF message for legacy templates that don't have the link built-in
+        this.log('info', '📤 Sending PDF certificate as separate message (legacy template)', { mediaUrl: twilioMediaUrl });
         try {
           const pdfMessage = `📄 *Your Donation Certificate*\n\nDear ${donorName},\n\nPlease find your official donation certificate attached above.\n\nSave this document for your records and tax purposes.\n\n🙏 Thank you for your generous contribution to ${this.templeName}!`;
 
@@ -1206,8 +1204,11 @@ For any queries, please contact: ${this.adminPhoneNumber}
         } catch (pdfError) {
           this.log('warn', '⚠️ Error sending PDF certificate', { error: pdfError });
         }
-      } else if (pdfBase64 && isLocalhost && pdfUrl) {
-        // Localhost fallback - send download link
+      } else if (usedCertLinkTemplate && receiptResult.success) {
+        // Cert link template was used - certificate link is already in the message
+        this.log('info', '✅ Certificate link already included in template message - no separate message needed');
+      } else if (pdfBase64 && isLocalhost && pdfUrl && !usedCertLinkTemplate) {
+        // Localhost fallback - send download link (only for legacy templates)
         this.log('info', '📤 Sending follow-up message with certificate download link (localhost workaround)');
         try {
           const followUpMessage = `📄 *Download Your Donation Certificate*\n\nDear ${donorName},\n\nYour donation certificate is ready for download:\n${pdfUrl}\n\n*Note:* This link is valid for 5 minutes. If it expires, please contact ${this.adminPhoneNumber}\n\n🙏 Thank you for your generous contribution!`;

@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { nodeCertificateGenerator } from '@/lib/certificate-generator-node'
 
+/**
+ * On-demand certificate generation endpoint
+ * Generates PDF certificate when user clicks the link in WhatsApp
+ * URL format: /api/certificate/DN-281125-0001
+ */
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ receiptNumber: string }> }
@@ -11,6 +17,14 @@ export async function GET(
     if (!receiptNumber) {
       return NextResponse.json(
         { error: 'Receipt number is required' },
+        { status: 400 }
+      )
+    }
+
+    // Validate receipt number format (basic check)
+    if (!receiptNumber.startsWith('DN-')) {
+      return NextResponse.json(
+        { error: 'Invalid receipt number format' },
         { status: 400 }
       )
     }
@@ -46,23 +60,43 @@ export async function GET(
     }
 
     console.log('✅ Donation found:', donation.receiptNumber)
+    console.log('📄 Generating certificate PDF on-demand...')
 
-    // Return donation details
-    return NextResponse.json({
-      receiptNumber: donation.receiptNumber,
-      donorName: donation.user?.name || 'Anonymous',
-      phoneNumber: donation.user?.phone || '',
+    // Generate PDF on-demand
+    const certificateData = {
+      donor_name: donation.user?.name || 'Anonymous',
       amount: donation.amount,
-      donationType: donation.donationType,
-      donationPurpose: donation.donationPurpose || '',
-      paymentId: donation.razorpayPaymentId || '',
-      createdAt: donation.createdAt.toISOString(),
+      donation_id: donation.receiptNumber,
+      donation_date: donation.createdAt.toISOString().split('T')[0],
+      phone_number: donation.user?.phone || '',
+      reason_text: 'for their valued contribution'
+    }
+
+    const pdfBuffer = await nodeCertificateGenerator.generate(certificateData)
+
+    console.log('✅ Certificate generated, size:', Math.round(pdfBuffer.length / 1024), 'KB')
+
+    // Return PDF as downloadable file
+    const filename = `Donation_Certificate_${receiptNumber}.pdf`
+
+    return new NextResponse(pdfBuffer, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Content-Length': pdfBuffer.length.toString(),
+        // Cache for 1 hour to reduce regeneration
+        'Cache-Control': 'public, max-age=3600',
+      }
     })
 
   } catch (error) {
-    console.error('❌ Error fetching donation:', error)
+    console.error('❌ Error generating certificate:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      {
+        error: 'Failed to generate certificate',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     )
   }

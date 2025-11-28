@@ -74,20 +74,18 @@ Booking Reference: {{5}}
 Please review this booking in your admin dashboard to coordinate the service arrangements. Booking requires attention.
 """
 
-HX4d4c034204e861d4e9291f2e5e76b21c :
+HX557be6a2ef50f1e73eac212622a682d7 :
 """
-Donation Receipt Confirmation
+Donation Certificate Ready
 
-This message confirms your donation transaction has been recorded in our system.
+Dear {{1}}, thank you for your donation of Rs.{{2}} to our temple.
 
-Donor Name: {{1}}
-Donation Amount: ₹{{2}}
-Receipt Number: {{3}}
-Transaction Date: {{4}}
+Receipt: {{3}}
+Date: {{4}}
 
-Your donation has been processed successfully. Receipt is available for download.
+Your certificate is ready at this link: {{5}} (valid 24 hours)
 
-For any questions or clarifications regarding this transaction, please contact {{5}} for assistance.
+Questions? Contact {{6}} for assistance.
 """
 
 HX0f0edb161d6f40ae35835411340785aa :
