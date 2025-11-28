@@ -6,6 +6,10 @@ import { nodeCertificateGenerator } from '@/lib/certificate-generator-node'
  * On-demand certificate generation endpoint
  * Generates PDF certificate when user clicks the link in WhatsApp
  * URL format: /api/certificate/DN-281125-0001
+ *
+ * Query params:
+ * - format=json: Returns donation details as JSON (for success page)
+ * - (default): Returns PDF certificate
  */
 export async function GET(
   request: NextRequest,
@@ -13,6 +17,8 @@ export async function GET(
 ) {
   try {
     const { receiptNumber } = await params
+    const { searchParams } = new URL(request.url)
+    const format = searchParams.get('format')
 
     if (!receiptNumber) {
       return NextResponse.json(
@@ -29,7 +35,7 @@ export async function GET(
       )
     }
 
-    console.log('🔍 Fetching donation for receipt:', receiptNumber)
+    console.log('🔍 Fetching donation for receipt:', receiptNumber, 'format:', format)
 
     // Fetch donation from database
     const donation = await prisma.donation.findUnique({
@@ -66,6 +72,21 @@ export async function GET(
       userPhone: donation.user?.phone,
       createdAt: donation.createdAt
     })
+
+    // If JSON format requested, return donation details
+    if (format === 'json') {
+      return NextResponse.json({
+        receiptNumber: donation.receiptNumber,
+        donorName: donation.user?.name || 'Anonymous',
+        phoneNumber: donation.user?.phone || '',
+        amount: donation.amount,
+        donationType: donation.donationType,
+        donationPurpose: donation.donationPurpose,
+        paymentId: donation.razorpayPaymentId,
+        createdAt: donation.createdAt.toISOString()
+      })
+    }
+
     console.log('📄 Generating certificate PDF on-demand...')
 
     // Generate PDF on-demand

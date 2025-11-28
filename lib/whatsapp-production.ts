@@ -372,6 +372,18 @@ class ProductionWhatsAppService {
       this.log('info', `📞 Fallback phone validated: ${details.donorPhone} → ${recipient}`);
 
       // Send receipt message with PDF certificate attachment
+      // Note: details.date can be either an ISO string, Date object, or pre-formatted string
+      let formattedDateStr: string;
+      try {
+        const dateObj = new Date(details.date);
+        // Check if date is valid
+        formattedDateStr = !isNaN(dateObj.getTime())
+          ? dateObj.toLocaleDateString('en-IN')
+          : details.date; // Use as-is if already formatted
+      } catch {
+        formattedDateStr = details.date; // Use as-is if parsing fails
+      }
+
       const receiptMessage = `🙏 *Donation Receipt* 🙏
 
 Dear ${details.donorName},
@@ -382,7 +394,7 @@ Thank you for your generous contribution to ${this.templeName}!
 • Receipt Number: ${details.receiptNumber}
 • Amount: ₹${details.amount.toLocaleString('en-IN')}
 • Donation Type: ${details.donationType}
-• Date: ${new Date(details.date).toLocaleDateString('en-IN')}
+• Date: ${formattedDateStr}
 
 ${pdfUrl ? `📄 *Your Donation Certificate*
 
@@ -1134,11 +1146,15 @@ For any queries, please contact: ${this.adminPhoneNumber}
           receiptNumber,
           amount,
           donationType,
-          date: formattedDate
+          date: formattedDate,
+          paymentId
         };
 
-        // Use fallback with regular message instead of template
-        const fallbackResult = await this.sendDonationReceipt(fallbackDetails, twilioMediaUrl, twilioMediaUrl);
+        // IMPORTANT: Don't pass the dynamic certificate URL as media attachment
+        // Twilio cannot reliably fetch our on-demand certificate generation endpoint
+        // Instead, pass undefined for pdfUrl (media) but include the URL as certificateUrl (text link)
+        // This sends a text message with the download link instead of trying to attach the PDF
+        const fallbackResult = await this.sendDonationReceipt(fallbackDetails, undefined, twilioMediaUrl);
 
         if (!fallbackResult.success) {
           this.log('error', `❌ Both template AND fallback failed for ${donorPhone}`);

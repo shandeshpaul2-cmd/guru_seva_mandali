@@ -32,10 +32,51 @@ function DonationSuccessContent() {
       const receiptFromUrl = searchParams.get('receipt')
       const paymentIdFromUrl = searchParams.get('paymentId')
 
-      if (receiptFromUrl) {
-        // We have receipt number from URL, try to fetch from API
+      // First, try to get from sessionStorage (PaymentPortal stores as 'paymentDetails')
+      const storedPaymentDetails = sessionStorage.getItem('paymentDetails')
+      if (storedPaymentDetails) {
         try {
-          const response = await fetch(`/api/certificate/${receiptFromUrl}`)
+          const paymentData = JSON.parse(storedPaymentDetails)
+          // PaymentPortal stores data in a different format
+          if (paymentData.userInfo && paymentData.items) {
+            setDonationDetails({
+              donorName: paymentData.userInfo.fullName || 'Devotee',
+              donorPhone: paymentData.userInfo.phoneNumber || '',
+              amount: paymentData.finalAmount || paymentData.totalAmount || 0,
+              donationType: paymentData.items[0]?.name || 'General Donation',
+              donationPurpose: paymentData.items[0]?.description || 'Temple Maintenance',
+              receiptNumber: paymentData.receiptNumber || receiptFromUrl || '',
+              paymentId: paymentData.paymentId || paymentIdFromUrl || '',
+              date: paymentData.date || new Date().toISOString()
+            })
+            setLoading(false)
+            // Clear sessionStorage after reading
+            sessionStorage.removeItem('paymentDetails')
+            return
+          }
+        } catch (error) {
+          console.error('Error parsing payment details:', error)
+        }
+      }
+
+      // Legacy: Try 'donationDetails' key (older sessions may have stored here)
+      const storedDonationDetails = sessionStorage.getItem('donationDetails')
+      if (storedDonationDetails) {
+        try {
+          const details = JSON.parse(storedDonationDetails)
+          setDonationDetails(details)
+          setLoading(false)
+          return
+        } catch (error) {
+          console.error('Error parsing donation details:', error)
+        }
+      }
+
+      // If we have receipt number from URL, fetch from API
+      if (receiptFromUrl) {
+        try {
+          // Use ?format=json to get donation details instead of PDF
+          const response = await fetch(`/api/certificate/${receiptFromUrl}?format=json`)
           if (response.ok) {
             const data = await response.json()
             setDonationDetails({
@@ -68,19 +109,6 @@ function DonationSuccessContent() {
         })
         setLoading(false)
         return
-      }
-
-      // Fall back to sessionStorage
-      const storedDetails = sessionStorage.getItem('donationDetails')
-      if (storedDetails) {
-        try {
-          const details = JSON.parse(storedDetails)
-          setDonationDetails(details)
-          setLoading(false)
-          return
-        } catch (error) {
-          console.error('Error parsing donation details:', error)
-        }
       }
 
       // No donation details found anywhere, redirect to donate page
