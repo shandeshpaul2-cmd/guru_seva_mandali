@@ -38,7 +38,7 @@ export class NodeCertificateGenerator {
 
     try {
       // Read HTML template
-      const htmlTemplate = await fs.readFile(this.templatePath, 'utf-8');
+      let htmlTemplate = await fs.readFile(this.templatePath, 'utf-8');
 
       // Prepare data for injection
       const certData = {
@@ -50,20 +50,15 @@ export class NodeCertificateGenerator {
         reasonText: input.reason_text || 'for their valued contribution',
       };
 
-      // Inject data into HTML
-      const htmlWithData = `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <script>
-              window.CERT_DATA = ${JSON.stringify(certData)};
-            </script>
-          </head>
-          <body>
-            ${htmlTemplate}
-          </body>
-        </html>
-      `;
+      // Inject CERT_DATA script into the template's <head> section
+      // This ensures proper HTML structure (no nested html/body tags)
+      const certDataScript = `<script>window.CERT_DATA = ${JSON.stringify(certData)};</script>`;
+
+      // Insert the script right after the opening <head> tag
+      const htmlWithData = htmlTemplate.replace(
+        /<head>/i,
+        `<head>\n${certDataScript}`
+      );
 
       // Launch Puppeteer
       const isLocal = process.env.NODE_ENV !== 'production';

@@ -136,21 +136,54 @@ export function getTemplate(key: TemplateKey): WhatsAppTemplate {
 }
 
 /**
+ * Variable order mapping for each template
+ * Twilio templates require variables in exact order: {{1}}, {{2}}, {{3}}, etc.
+ */
+const TEMPLATE_VARIABLE_ORDER: Record<TemplateKey, string[]> = {
+  'DONATION_RECEIPT_WITH_CERTIFICATE': ['donorName', 'amount', 'receiptNumber', 'date', 'contact'],
+  'DONATION_CERTIFICATE_LINK': ['donorName', 'amount', 'receiptNumber', 'date', 'certLink', 'contact'],
+  'ADMIN_DONATION_NOTIFICATION': ['donorName', 'donorPhone', 'amount', 'receiptNumber', 'date'],
+  'POOJA_BOOKING_CONFIRMATION': ['devoteeName', 'poojaName', 'bookingDate', 'receiptNumber', 'contact'],
+  'ADMIN_POOJA_BOOKING_NOTIFICATION': ['devoteeName', 'devoteePhone', 'poojaName', 'bookingDate', 'receiptNumber'],
+  'PARIHARA_POOJA_CONFIRMATION': ['devoteeName', 'poojaName', 'bookingDate', 'receiptNumber', 'contact'],
+  'ADMIN_PARIHARA_POOJA_NOTIFICATION': ['devoteeName', 'devoteePhone', 'poojaName', 'bookingDate', 'receiptNumber'],
+  'ASTROLOGY_CONSULTATION_CONFIRMATION': ['clientName', 'consultationType', 'requestDate', 'referenceNumber', 'contact'],
+  'ADMIN_ASTROLOGY_CONSULTATION_NOTIFICATION': ['clientName', 'clientPhone', 'consultationType', 'requestDate', 'referenceNumber'],
+};
+
+/**
  * Prepare template variables in Twilio format
+ * IMPORTANT: Variables MUST be in the exact order defined by the template
  */
 export function prepareTemplateVariables(
   templateKey: TemplateKey,
   variables: WhatsAppTemplateVariable
 ): Record<string, string> {
-  const template = getTemplate(templateKey);
-
-  // Map variables to template format
+  // Map variables to template format in the CORRECT ORDER
   const templateVariables: Record<string, string> = {};
+  const variableOrder = TEMPLATE_VARIABLE_ORDER[templateKey];
 
-  // Convert variables to indexed format (1, 2, 3, etc.)
-  Object.keys(variables).forEach((key, index) => {
-    templateVariables[String(index + 1)] = variables[key];
+  if (!variableOrder) {
+    console.error(`No variable order defined for template: ${templateKey}`);
+    // Fallback to object iteration (unreliable but better than nothing)
+    Object.keys(variables).forEach((key, index) => {
+      templateVariables[String(index + 1)] = variables[key];
+    });
+    return templateVariables;
+  }
+
+  // Map variables in the defined order
+  variableOrder.forEach((key, index) => {
+    const value = variables[key];
+    if (value !== undefined) {
+      templateVariables[String(index + 1)] = value;
+    } else {
+      console.warn(`Missing variable for template ${templateKey}: ${key}`);
+      templateVariables[String(index + 1)] = '';
+    }
   });
+
+  console.log(`📋 Template ${templateKey} variables mapped:`, templateVariables);
 
   return templateVariables;
 }

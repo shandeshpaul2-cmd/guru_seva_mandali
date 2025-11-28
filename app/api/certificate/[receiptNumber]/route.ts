@@ -59,7 +59,13 @@ export async function GET(
       )
     }
 
-    console.log('✅ Donation found:', donation.receiptNumber)
+    console.log('✅ Donation found:', {
+      receiptNumber: donation.receiptNumber,
+      amount: donation.amount,
+      userName: donation.user?.name,
+      userPhone: donation.user?.phone,
+      createdAt: donation.createdAt
+    })
     console.log('📄 Generating certificate PDF on-demand...')
 
     // Generate PDF on-demand
@@ -71,6 +77,8 @@ export async function GET(
       phone_number: donation.user?.phone || '',
       reason_text: 'for their valued contribution'
     }
+
+    console.log('📋 Certificate data:', certificateData)
 
     const pdfBuffer = await nodeCertificateGenerator.generate(certificateData)
 
