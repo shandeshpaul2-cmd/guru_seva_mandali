@@ -276,7 +276,7 @@ Temple Admin System
    - Sample: `Ramesh Kumar`
 
 2. **Variable {{2}}** - Donor Phone
-   - Sample: `+917760118171`
+   - Sample: `+917019337306`
 
 3. **Variable {{3}}** - Amount (with ₹ symbol)
    - Sample: `₹501`

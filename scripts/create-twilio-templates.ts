@@ -73,7 +73,7 @@ Check admin dashboard for details.`,
     language: 'en',
     variables: {
       '1': 'Ramesh Kumar',
-      '2': '+917760118171',
+      '2': '+917019337306',
       '3': '₹501',
       '4': 'DN-2025-001234',
       '5': '23/11/2025'

@@ -78,7 +78,7 @@ export interface RateLimiter {
 
 class ProductionWhatsAppService {
   private config: ProductionWhatsAppConfig;
-  private adminPhoneNumber = '+917760118171';
+  private adminPhoneNumber = '+917019337306';
   private templeName = 'Shri Raghavendra Swamy Brundavana Sannidhi';
 
   // Rate limiting
