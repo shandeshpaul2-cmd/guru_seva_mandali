@@ -992,7 +992,8 @@ For any queries, please contact: ${this.adminPhoneNumber}
       let twilioMediaUrl: string | undefined = undefined;
 
       // Check if we're in localhost/development mode
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+      // IMPORTANT: .trim() removes any accidental whitespace/newlines from env vars
+      const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000').trim();
       const isLocalhost = baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1');
 
       if (!isLocalhost) {

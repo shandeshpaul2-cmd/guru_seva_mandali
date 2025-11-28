@@ -34,9 +34,10 @@ export interface WhatsAppTemplate {
  */
 const TEMPLATES: Record<TemplateKey, WhatsAppTemplate> = {
   // Donation Receipt Template (with certificate attachment)
+  // IMPORTANT: .trim() removes any accidental whitespace/newlines from env vars
   DONATION_RECEIPT_WITH_CERTIFICATE: {
     name: 'donation_receipt_certificate',
-    contentSid: process.env.TWILIO_TEMPLATE_DONATION_RECEIPT_V2 || process.env.TWILIO_TEMPLATE_DONATION_RECEIPT || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    contentSid: (process.env.TWILIO_TEMPLATE_DONATION_RECEIPT_V2 || process.env.TWILIO_TEMPLATE_DONATION_RECEIPT || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx').trim(),
     variableCount: process.env.TWILIO_TEMPLATE_DONATION_RECEIPT_V2 ? 5 : 7, // V2/V3: 5 vars, V1: 7 vars
     hasMedia: true, // Supports PDF certificate attachment
     language: 'en',
@@ -46,7 +47,7 @@ const TEMPLATES: Record<TemplateKey, WhatsAppTemplate> = {
   // Donation Certificate with Download Link (6 variables: name, amount, receipt, date, pdfUrl, contact)
   DONATION_CERTIFICATE_LINK: {
     name: 'donation_certificate_link',
-    contentSid: process.env.TWILIO_TEMPLATE_DONATION_CERT_LINK || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    contentSid: (process.env.TWILIO_TEMPLATE_DONATION_CERT_LINK || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx').trim(),
     variableCount: 6,
     hasMedia: false, // PDF URL is passed as text variable, not media
     language: 'en',
@@ -56,7 +57,7 @@ const TEMPLATES: Record<TemplateKey, WhatsAppTemplate> = {
   // Admin Donation Notification
   ADMIN_DONATION_NOTIFICATION: {
     name: 'admin_donation_notification',
-    contentSid: process.env.TWILIO_TEMPLATE_ADMIN_DONATION_V2 || process.env.TWILIO_TEMPLATE_ADMIN_DONATION || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    contentSid: (process.env.TWILIO_TEMPLATE_ADMIN_DONATION_V2 || process.env.TWILIO_TEMPLATE_ADMIN_DONATION || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx').trim(),
     variableCount: process.env.TWILIO_TEMPLATE_ADMIN_DONATION_V2 ? 5 : 7, // V2/V3: 5 vars, V1: 7 vars
     hasMedia: false,
     language: 'en',
@@ -66,7 +67,7 @@ const TEMPLATES: Record<TemplateKey, WhatsAppTemplate> = {
   // Pooja Booking Confirmation
   POOJA_BOOKING_CONFIRMATION: {
     name: 'pooja_booking_confirmation',
-    contentSid: process.env.TWILIO_TEMPLATE_POOJA_BOOKING_V2 || process.env.TWILIO_TEMPLATE_POOJA_BOOKING || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    contentSid: (process.env.TWILIO_TEMPLATE_POOJA_BOOKING_V2 || process.env.TWILIO_TEMPLATE_POOJA_BOOKING || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx').trim(),
     variableCount: 5, // V3: name, service, date, reference, contact
     hasMedia: false,
     language: 'en',
@@ -76,7 +77,7 @@ const TEMPLATES: Record<TemplateKey, WhatsAppTemplate> = {
   // Admin Pooja Booking Notification
   ADMIN_POOJA_BOOKING_NOTIFICATION: {
     name: 'admin_pooja_booking_notification',
-    contentSid: process.env.TWILIO_TEMPLATE_ADMIN_POOJA_V2 || process.env.TWILIO_TEMPLATE_ADMIN_POOJA || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    contentSid: (process.env.TWILIO_TEMPLATE_ADMIN_POOJA_V2 || process.env.TWILIO_TEMPLATE_ADMIN_POOJA || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx').trim(),
     variableCount: 5, // V3: devotee, phone, service, date, reference
     hasMedia: false,
     language: 'en',
@@ -86,7 +87,7 @@ const TEMPLATES: Record<TemplateKey, WhatsAppTemplate> = {
   // Parihara Pooja Confirmation
   PARIHARA_POOJA_CONFIRMATION: {
     name: 'parihara_pooja_confirmation',
-    contentSid: process.env.TWILIO_TEMPLATE_PARIHARA_BOOKING_V2 || process.env.TWILIO_TEMPLATE_PARIHARA_BOOKING || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    contentSid: (process.env.TWILIO_TEMPLATE_PARIHARA_BOOKING_V2 || process.env.TWILIO_TEMPLATE_PARIHARA_BOOKING || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx').trim(),
     variableCount: 5, // V3: name, service, date, reference, contact
     hasMedia: false,
     language: 'en',
@@ -96,7 +97,7 @@ const TEMPLATES: Record<TemplateKey, WhatsAppTemplate> = {
   // Admin Parihara Pooja Notification
   ADMIN_PARIHARA_POOJA_NOTIFICATION: {
     name: 'admin_parihara_pooja_notification',
-    contentSid: process.env.TWILIO_TEMPLATE_ADMIN_PARIHARA_V2 || process.env.TWILIO_TEMPLATE_ADMIN_PARIHARA || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    contentSid: (process.env.TWILIO_TEMPLATE_ADMIN_PARIHARA_V2 || process.env.TWILIO_TEMPLATE_ADMIN_PARIHARA || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx').trim(),
     variableCount: 5, // V3: devotee, phone, service, date, reference
     hasMedia: false,
     language: 'en',
@@ -106,7 +107,7 @@ const TEMPLATES: Record<TemplateKey, WhatsAppTemplate> = {
   // Astrology Consultation Confirmation
   ASTROLOGY_CONSULTATION_CONFIRMATION: {
     name: 'astrology_consultation_confirmation',
-    contentSid: process.env.TWILIO_TEMPLATE_ASTROLOGY_BOOKING_V2 || process.env.TWILIO_TEMPLATE_ASTROLOGY_CONSULTATION || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    contentSid: (process.env.TWILIO_TEMPLATE_ASTROLOGY_BOOKING_V2 || process.env.TWILIO_TEMPLATE_ASTROLOGY_CONSULTATION || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx').trim(),
     variableCount: 5, // V3: name, type, date, reference, contact
     hasMedia: false,
     language: 'en',
@@ -116,7 +117,7 @@ const TEMPLATES: Record<TemplateKey, WhatsAppTemplate> = {
   // Admin Astrology Consultation Notification
   ADMIN_ASTROLOGY_CONSULTATION_NOTIFICATION: {
     name: 'admin_astrology_consultation_notification',
-    contentSid: process.env.TWILIO_TEMPLATE_ADMIN_ASTROLOGY_V2 || process.env.TWILIO_TEMPLATE_ADMIN_ASTROLOGY || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    contentSid: (process.env.TWILIO_TEMPLATE_ADMIN_ASTROLOGY_V2 || process.env.TWILIO_TEMPLATE_ADMIN_ASTROLOGY || 'HXxxxxxxxxxxxxxxxxxxxxxxxxxxxx').trim(),
     variableCount: 5, // V3: client, phone, type, date, reference
     hasMedia: false,
     language: 'en',
