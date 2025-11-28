@@ -79,7 +79,10 @@ export async function GET(
     // Return PDF as downloadable file
     const filename = `Donation_Certificate_${receiptNumber}.pdf`
 
-    return new NextResponse(pdfBuffer, {
+    // Convert Buffer to Uint8Array for NextResponse compatibility
+    const pdfUint8Array = new Uint8Array(pdfBuffer)
+
+    return new NextResponse(pdfUint8Array, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
