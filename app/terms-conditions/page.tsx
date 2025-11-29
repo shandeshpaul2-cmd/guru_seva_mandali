@@ -398,7 +398,7 @@ export default function TermsConditionsPage() {
                 <p><strong>Shri Raghavendra Swamy Brundavana Sannidhi</strong></p>
                 <p>9/2, Damodar Modaliar Road, Ulsoor</p>
                 <p>Bangalore - 560008, Karnataka, India</p>
-                <p>Phone: +91 99455 94845 / +91 99025 20105</p>
+                <p>Phone: +91 7019337306 / +91 99025 20105</p>
                 <p>
                   Email:{' '}
                   <a href="mailto:harishkumar@gurusevamandali.com"

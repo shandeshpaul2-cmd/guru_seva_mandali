@@ -415,7 +415,7 @@ export default function RefundPolicyPage() {
                 <p>Bangalore - 560008, Karnataka, India</p>
                 <p>
                   <strong>Phone (Available 9 AM - 7 PM):</strong><br />
-                  +91 99455 94845 / +91 99025 20105
+                  +91 7019337306 / +91 99025 20105
                 </p>
                 <p>
                   <strong>Email (Response within 24 hours):</strong><br />

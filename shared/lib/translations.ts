@@ -292,8 +292,8 @@ export const translations = {
   kn: {
     templeDeity: 'ಶ್ರೀ ರಾಘವೇಂದ್ರ ಬೃಂದಾವನ ಸನ್ನಿಧಿ',
     templeName: '',
-    templeSubtitle: 'ಹಾಲಸೂರು, ಬೆಂಗಳೂರು',
-    address: 'ಸಂ. 9/2, ದಾಮೋಧರ ಮುದಲಿಯಾರ್ ಸ್ಟ್ರೀಟ್, ಹಾಲಸೂರು, ಬೆಂಗಳೂರು - 560 008',
+    templeSubtitle: 'ಹಲಸೂರು, ಬೆಂಗಳೂರು',
+    address: 'ಸಂ. 9/2, ದಾಮೋಧರ ಮುದಲಿಯಾರ್ ಸ್ಟ್ರೀಟ್, ಹಲಸೂರು, ಬೆಂಗಳೂರು - 560 008',
     ourServices: 'ನಮ್ಮ ಸೇವೆಗಳು',
     chooseService: 'ನೀವು ಹೇಗೆ ಸೇವೆ ಮಾಡಲು ಬಯಸುತ್ತೀರಿ ಆಯ್ಕೆಮಾಡಿ',
     donation: 'ದಾನ',
