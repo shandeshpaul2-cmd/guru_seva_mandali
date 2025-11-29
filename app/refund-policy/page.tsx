@@ -1,29 +1,34 @@
+'use client'
+
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-
-export const metadata = {
-  title: 'Refund & Cancellation Policy | Shri Raghavendra Swamy Brundavana Sannidhi',
-  description: 'Refund & Cancellation Policy for Shri Raghavendra Swamy Brundavana Sannidhi',
-}
+import { useLanguage } from '@/shared/contexts/contexts/LanguageContext'
+import { LanguageSelector } from '@/shared/components/common/LanguageSelector'
 
 export default function RefundPolicyPage() {
+  const { t } = useLanguage()
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-temple-cream via-white to-orange-50">
       <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        {/* Back Button */}
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-temple-maroon hover:text-temple-gold transition-colors mb-6"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span className="font-medium">Back to Home</span>
-        </Link>
+        <div className="flex justify-between items-center mb-6">
+          {/* Back Button */}
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-temple-maroon hover:text-temple-gold transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span className="font-medium">Back to Home</span>
+          </Link>
+          {/* Language Selector */}
+          <LanguageSelector />
+        </div>
 
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-xl border-2 border-temple-gold/20 overflow-hidden">
           <div className="bg-gradient-to-r from-temple-maroon to-orange-900 text-white px-6 py-8 sm:px-8">
             <h1 className="font-cinzel text-3xl sm:text-4xl font-bold mb-2">
-              Refund & Cancellation Policy
+              {t.refundPolicyTitle}
             </h1>
             <p className="text-orange-100">
               Last Updated: {new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -35,9 +40,7 @@ export default function RefundPolicyPage() {
             {/* Introduction */}
             <section>
               <p className="leading-relaxed">
-                At Shri Raghavendra Swamy Brundavana Sannidhi, we value your trust and devotion. This
-                Refund & Cancellation Policy outlines the terms and conditions for cancellations and
-                refunds for donations, pooja bookings, and astrology consultations made through our platform.
+                {t.refundPolicyIntro}
               </p>
             </section>
 
@@ -404,21 +407,20 @@ export default function RefundPolicyPage() {
             {/* Contact Information */}
             <section className="bg-orange-50 border border-orange-200 rounded-lg p-6">
               <h2 className="font-cinzel text-2xl font-semibold text-temple-maroon mb-3">
-                10. Contact Us for Cancellations & Refunds
+                10. {t.contactUsPolicies}
               </h2>
               <p className="mb-4">
                 For cancellations, refunds, or rescheduling requests, please contact us:
               </p>
               <div className="space-y-2 text-gray-700">
                 <p><strong>Shri Raghavendra Swamy Brundavana Sannidhi</strong></p>
-                <p>9/2, Damodar Modaliar Road, Ulsoor</p>
-                <p>Bangalore - 560008, Karnataka, India</p>
+                <p>{t.policyAddress}</p>
                 <p>
-                  <strong>Phone (Available 9 AM - 7 PM):</strong><br />
+                  <strong>{t.policyPhone} (Available 9 AM - 7 PM):</strong><br />
                   +91 7019337306 / +91 99025 20105
                 </p>
                 <p>
-                  <strong>Email (Response within 24 hours):</strong><br />
+                  <strong>{t.policyEmail} (Response within 24 hours):</strong><br />
                   <a href="mailto:harishkumar@gurusevamandali.com"
                      className="text-temple-maroon hover:underline">
                     harishkumar@gurusevamandali.com

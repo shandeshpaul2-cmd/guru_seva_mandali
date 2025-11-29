@@ -1,29 +1,34 @@
+'use client'
+
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-
-export const metadata = {
-  title: 'Privacy Policy | Shri Raghavendra Swamy Brundavana Sannidhi',
-  description: 'Privacy Policy for Shri Raghavendra Swamy Brundavana Sannidhi',
-}
+import { useLanguage } from '@/shared/contexts/contexts/LanguageContext'
+import { LanguageSelector } from '@/shared/components/common/LanguageSelector'
 
 export default function PrivacyPolicyPage() {
+  const { t } = useLanguage()
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-temple-cream via-white to-orange-50">
       <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        {/* Back Button */}
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-temple-maroon hover:text-temple-gold transition-colors mb-6"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span className="font-medium">Back to Home</span>
-        </Link>
+        <div className="flex justify-between items-center mb-6">
+          {/* Back Button */}
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-temple-maroon hover:text-temple-gold transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span className="font-medium">Back to Home</span>
+          </Link>
+          {/* Language Selector */}
+          <LanguageSelector />
+        </div>
 
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-xl border-2 border-temple-gold/20 overflow-hidden">
           <div className="bg-gradient-to-r from-temple-maroon to-orange-900 text-white px-6 py-8 sm:px-8">
             <h1 className="font-cinzel text-3xl sm:text-4xl font-bold mb-2">
-              Privacy Policy
+              {t.privacyPolicyTitle}
             </h1>
             <p className="text-orange-100">
               Last Updated: {new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -35,16 +40,14 @@ export default function PrivacyPolicyPage() {
             {/* Introduction */}
             <section>
               <p className="leading-relaxed">
-                Shri Raghavendra Swamy Brundavana Sannidhi ("we", "our", or "us") is committed to protecting
-                your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your
-                information when you use our online donation and pooja booking platform.
+                {t.privacyPolicyIntro}
               </p>
             </section>
 
             {/* Information We Collect */}
             <section>
               <h2 className="font-cinzel text-2xl font-semibold text-temple-maroon mb-3">
-                1. Information We Collect
+                {t.privacySection1Title}
               </h2>
 
               <h3 className="font-semibold text-lg text-gray-800 mb-2 mt-4">
@@ -225,7 +228,7 @@ export default function PrivacyPolicyPage() {
             {/* Contact Information */}
             <section className="bg-orange-50 border border-orange-200 rounded-lg p-6">
               <h2 className="font-cinzel text-2xl font-semibold text-temple-maroon mb-3">
-                10. Contact Us
+                10. {t.contactUsPolicies}
               </h2>
               <p className="mb-4">
                 If you have questions about this Privacy Policy or wish to exercise your rights,
@@ -233,11 +236,10 @@ export default function PrivacyPolicyPage() {
               </p>
               <div className="space-y-2 text-gray-700">
                 <p><strong>Shri Raghavendra Swamy Brundavana Sannidhi</strong></p>
-                <p>9/2, Damodar Modaliar Road, Ulsoor</p>
-                <p>Bangalore - 560008, Karnataka, India</p>
-                <p>Phone: +91 7019337306 / +91 99025 20105</p>
+                <p>{t.policyAddress}</p>
+                <p>{t.policyPhone}: +91 7019337306 / +91 99025 20105</p>
                 <p>
-                  Email:{' '}
+                  {t.policyEmail}:{' '}
                   <a href="mailto:harishkumar@gurusevamandali.com"
                      className="text-temple-maroon hover:underline">
                     harishkumar@gurusevamandali.com
