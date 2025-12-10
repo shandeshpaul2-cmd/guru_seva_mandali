@@ -248,7 +248,7 @@ export function MediaCarousel({
             </button>
 
             {/* Navigation Arrows */}
-            {selectedMedia.length > 1 && (
+            {items.length > 1 && (
               <>
                 <button
                   onClick={() => navigateMedia('prev')}
