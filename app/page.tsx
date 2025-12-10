@@ -1,13 +1,33 @@
 'use client'
 
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
 import { LanguageSelector } from '@/shared/components/common/LanguageSelector'
 import { LocationCard } from '@/shared/components/common/LocationCard'
 import { ArrowRight, Phone, MapPin, Heart, Calendar, Star, Sun } from 'lucide-react'
 import { useLanguage } from '@/shared/contexts/contexts/LanguageContext'
+import { MediaCarousel, MediaItem } from '@/shared/components/carousel/MediaCarousel'
 
 export default function Home() {
   const { t } = useLanguage()
+  const [galleryItems, setGalleryItems] = useState<MediaItem[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      try {
+        const res = await fetch('/api/gallery')
+        const data = await res.json()
+        setGalleryItems(data)
+      } catch (error) {
+        console.error('Failed to load gallery:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchGallery()
+  }, [])
 
   return (
     <div className="min-h-screen bg-temple-cream">
@@ -160,6 +180,19 @@ export default function Home() {
               </div>
             </Link>
           </div>
+
+          {/* Gallery Section */}
+          {!isLoading && galleryItems.length > 0 && (
+            <div className="mb-12">
+              <div className="text-center mb-8">
+                <h2 className="font-cinzel text-xl sm:text-2xl font-bold text-temple-maroon mb-2">
+                  Gallery
+                </h2>
+                <p className="text-gray-600 text-sm">Moments from our temple</p>
+              </div>
+              <MediaCarousel items={galleryItems} itemWidth="w-72" itemHeight="h-56" />
+            </div>
+          )}
 
           {/* Location Section */}
           <div className="mb-12">
