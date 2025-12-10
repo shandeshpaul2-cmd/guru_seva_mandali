@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { LanguageSelector } from '@/shared/components/common/LanguageSelector'
 import { LocationCard } from '@/shared/components/common/LocationCard'
-import { ArrowRight, Phone, MapPin, Heart, Calendar, Star, Sun } from 'lucide-react'
+import { ArrowRight, Phone, Heart, Calendar, Star, Sun } from 'lucide-react'
 import { useLanguage } from '@/shared/contexts/contexts/LanguageContext'
 import { MediaCarousel, MediaItem } from '@/shared/components/carousel/MediaCarousel'
 
@@ -69,12 +69,6 @@ export default function Home() {
             <p className="text-sm sm:text-base text-gray-600">
               {t.templeSubtitle}
             </p>
-          </div>
-
-          {/* Address */}
-          <div className="flex items-center justify-center gap-2 text-gray-600 text-sm mb-4">
-            <MapPin className="w-4 h-4 flex-shrink-0" />
-            <span>{t.address}</span>
           </div>
 
           {/* Divider */}
