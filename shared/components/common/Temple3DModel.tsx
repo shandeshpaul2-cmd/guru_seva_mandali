@@ -179,7 +179,7 @@ function Temple3DModelContent({
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-temple-gold mt-0.5">•</span>
-                  <span><strong>Two-finger tap & drag</strong> to move the model</span>
+                  <span><strong>Two-finger tap & drag</strong> <span className="text-gray-500">[trackpad]</span> to move the model</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-temple-gold mt-0.5">•</span>
