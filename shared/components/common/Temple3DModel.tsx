@@ -1,11 +1,11 @@
 'use client'
 
 import { Suspense, useState, useEffect } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas } from '@react-three/fiber'
 import { OrbitControls, useGLTF } from '@react-three/drei'
 import { Spinner } from '../ui'
 import { ChevronDown } from 'lucide-react'
-import { Box3, Vector3 } from 'three'
+import { Box3, Vector3, Color } from 'three'
 
 interface Temple3DModelProps {
   modelPath?: string
@@ -77,7 +77,10 @@ function Temple3DModelContent({
     console.log('Loading 3D model from:', modelPath)
   }, [modelPath])
 
-  const handleCanvasCreated = () => {
+  const handleCanvasCreated = (state: any) => {
+    // Set background color
+    state.scene.background = new Color('#FFF8DC')
+
     // Give it a moment to render, then hide loading
     setTimeout(() => {
       setIsLoading(false)
@@ -118,7 +121,6 @@ function Temple3DModelContent({
 
         <Canvas
           camera={{ position: [0, 0, 5], fov: 50 }}
-          gl={{ clearColor: '#FFF8DC' }}
           onCreated={handleCanvasCreated}
           dpr={isMobile ? 1 : Math.min(window.devicePixelRatio, 2)}
           performance={{ min: 0.5, max: 1 }}
