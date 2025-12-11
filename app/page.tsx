@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { LanguageSelector } from '@/shared/components/common/LanguageSelector'
 import { LocationCard } from '@/shared/components/common/LocationCard'
+import Temple3DModel from '@/shared/components/common/Temple3DModel'
 import { ArrowRight, Phone, Heart, Calendar, Star, Sun } from 'lucide-react'
 import { useLanguage } from '@/shared/contexts/contexts/LanguageContext'
 import { MediaCarousel, MediaItem } from '@/shared/components/carousel/MediaCarousel'
@@ -46,18 +47,6 @@ export default function Home() {
 
         {/* Hero Section */}
         <header className="text-center py-8">
-          {/* Logo */}
-          <div className="mb-6">
-            <div className="w-20 h-20 mx-auto overflow-hidden rounded-full">
-              <img
-                src="/sri-raghavendra-logo.png"
-                alt="Sri Raghavendra Swamy"
-                className="w-full h-full object-cover"
-                style={{ objectPosition: 'center 35%' }}
-              />
-            </div>
-          </div>
-
           {/* Title */}
           <div className="mb-6">
             <h1 className="font-cinzel text-2xl sm:text-3xl font-bold text-temple-maroon mb-2">
@@ -76,6 +65,21 @@ export default function Home() {
             <div className="h-px w-12 bg-temple-gold"></div>
             <div className="text-temple-gold text-sm">●</div>
             <div className="h-px w-12 bg-temple-gold"></div>
+          </div>
+
+          {/* 3D Temple Model Heading */}
+          <h2 className="font-cinzel text-xl sm:text-2xl font-bold text-temple-maroon mb-4">
+            Experience Our Sacred Temple
+          </h2>
+
+          {/* 3D Temple Model */}
+          <div className="mb-8 w-full max-w-2xl mx-auto">
+            <Temple3DModel
+              width="100%"
+              height="100%"
+              minHeight="300px"
+              className="w-full h-auto rounded-lg shadow-lg"
+            />
           </div>
         </header>
 
