@@ -2,6 +2,8 @@
 
 import { useRef, useEffect, useState } from 'react'
 import { ChevronLeft, ChevronRight, Play, X, Maximize2, Minimize2 } from 'lucide-react'
+import { ResponsiveImage } from '../gallery/ResponsiveImage'
+import { AdaptiveVideo } from '../gallery/AdaptiveVideo'
 
 export interface MediaItem {
   id: string
@@ -9,6 +11,7 @@ export interface MediaItem {
   type: 'image' | 'video'
   alt: string
   thumbnail?: string
+  date?: string
 }
 
 interface MediaCarouselProps {
@@ -151,7 +154,7 @@ export function MediaCarousel({
             className={`scroll-smooth mx-auto ${
               isExpanded
                 ? `grid gap-4 w-full px-4 sm:px-6 overflow-y-auto max-h-[80vh] ${
-                    isMobile ? 'grid-cols-1' : 'sm:grid-cols-2 lg:grid-cols-3'
+                    isMobile ? 'grid-cols-2' : 'sm:grid-cols-2 lg:grid-cols-3'
                   }`
                 : `flex gap-4 sm:gap-6 overflow-x-auto px-4 sm:px-6 md:px-14 py-4 max-w-6xl`
             }`}
@@ -171,11 +174,11 @@ export function MediaCarousel({
               >
                 {/* Media Content */}
                 {item.type === 'image' ? (
-                  <img
+                  <ResponsiveImage
                     src={item.src}
                     alt={item.alt}
+                    date={item.date}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    loading="lazy"
                   />
                 ) : (
                   <>
@@ -224,17 +227,20 @@ export function MediaCarousel({
           >
             {/* Main Media Display */}
             {selectedMedia.type === 'image' ? (
-              <img
+              <ResponsiveImage
                 src={selectedMedia.src}
                 alt={selectedMedia.alt}
+                date={selectedMedia.date}
                 className="w-full h-auto max-h-[80vh] object-contain"
+                priority={true}
               />
             ) : (
-              <video
+              <AdaptiveVideo
                 src={selectedMedia.src}
-                controls
-                autoPlay
+                date={selectedMedia.date}
                 className="w-full h-auto max-h-[80vh]"
+                controls={true}
+                autoPlay={true}
               />
             )}
 

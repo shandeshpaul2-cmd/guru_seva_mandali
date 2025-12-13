@@ -25,11 +25,12 @@ export function middleware(request: NextRequest) {
   // Allows your app to load resources only from trusted sources
   const cspDirectives = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://apis.google.com https://vercel.live",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://apis.google.com https://vercel.live blob:",
+    "worker-src 'self' blob:",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: https: blob:",
     "font-src 'self' data: https://fonts.gstatic.com",
-    "connect-src 'self' https://www.gurusevamandali.com https://api.razorpay.com https://merchant.razorpay.com https://lumberjack.razorpay.com https://vercel.live",
+    "connect-src 'self' blob: https://www.gurusevamandali.com https://api.razorpay.com https://merchant.razorpay.com https://lumberjack.razorpay.com https://vercel.live https://www.gstatic.com",
     "frame-src 'self' https://api.razorpay.com https://vercel.live",
     "object-src 'none'",
     "base-uri 'self'",
