@@ -89,15 +89,28 @@ export default function DonatePage() {
             </p>
           </div>
 
-          <div className="p-8">
-            <div className="bg-orange-50 rounded-xl p-6 mb-8">
-              <div className="text-center mb-3">
-                <span className="text-lg font-medium text-orange-800">{t.supportDivineService}</span>
-              </div>
-              <p className="text-gray-700 text-center">
-                {t.everyContribution}
-              </p>
-            </div>
+           <div className="p-8">
+             {/* Video Section */}
+             <div className="mb-8 rounded-xl overflow-hidden shadow-lg w-64 mx-auto">
+               <video 
+                 width="100%" 
+                 height="auto" 
+                 controls
+                 className="w-full bg-black"
+               >
+                 <source src="/videos/donaiton page vid.mp4" type="video/mp4" />
+                 Your browser does not support the video tag.
+               </video>
+             </div>
+
+             <div className="bg-orange-50 rounded-xl p-6 mb-8">
+               <div className="text-center mb-3">
+                 <span className="text-lg font-medium text-orange-800">{t.supportDivineService}</span>
+               </div>
+               <p className="text-gray-700 text-center">
+                 {t.everyContribution}
+               </p>
+             </div>
 
             <div className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
