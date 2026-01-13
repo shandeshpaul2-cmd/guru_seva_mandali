@@ -39,15 +39,70 @@ export const GALLERY_MEDIA: MediaItem[] = [
     src: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=500&h=400&fit=crop',
     alt: 'Temple Gallery 6',
   },
+  {
+    id: 'img-7',
+    type: 'image',
+    src: '/images/temple-image-5.jpeg',
+    alt: 'Temple Gallery 5',
+  },
+  {
+    id: 'img-8',
+    type: 'image',
+    src: '/images/temple-image-6.jpeg',
+    alt: 'Temple Gallery 6',
+  },
+  {
+    id: 'img-9',
+    type: 'image',
+    src: '/images/temple-image-7.jpeg',
+    alt: 'Temple Gallery 7',
+  },
+  {
+    id: 'img-10',
+    type: 'image',
+    src: '/images/temple-image-8.jpeg',
+    alt: 'Temple Gallery 8',
+  },
+  {
+    id: 'img-11',
+    type: 'image',
+    src: '/images/temple-image-9.jpeg',
+    alt: 'Temple Gallery 9',
+  },
+  {
+    id: 'img-12',
+    type: 'image',
+    src: '/images/temple-image-10.jpeg',
+    alt: 'Temple Gallery 10',
+  },
+  {
+    id: 'img-13',
+    type: 'image',
+    src: '/images/temple-image-11.jpeg',
+    alt: 'Temple Gallery 11',
+  },
   // Add your videos here
-  // Example:
-  // {
-  //   id: 'vid-1',
-  //   type: 'video',
-  //   src: '/videos/temple-ceremony.mp4',
-  //   alt: 'Temple Ceremony Video',
-  //   thumbnail: 'https://images.unsplash.com/photo-1495391033685-ee71a382c7e8?w=500&h=400&fit=crop',
-  // },
+  {
+    id: 'vid-1',
+    type: 'video',
+    src: '/videos/temple-video-7.mp4',
+    alt: 'Temple Video 7',
+    thumbnail: '/images/temple-image-1.jpeg',
+  },
+  {
+    id: 'vid-2',
+    type: 'video',
+    src: '/videos/temple-video-8.mp4',
+    alt: 'Temple Video 8',
+    thumbnail: '/images/temple-image-2.jpeg',
+  },
+  {
+    id: 'vid-3',
+    type: 'video',
+    src: '/videos/temple-video-9.mp4',
+    alt: 'Temple Video 9',
+    thumbnail: '/images/temple-image-3.jpeg',
+  },
 ]
 
 // Legacy images array for backward compatibility
