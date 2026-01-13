@@ -33,12 +33,6 @@ export function AdaptiveVideo({
         autoPlay={autoPlay}
       />
 
-      {/* Date Overlay */}
-      {date && (
-        <div className="absolute bottom-12 sm:bottom-14 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-2 pointer-events-none">
-          <p className="text-white text-xs sm:text-sm font-semibold">{date}</p>
-        </div>
-      )}
     </div>
   )
 }

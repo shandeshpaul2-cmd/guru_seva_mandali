@@ -37,13 +37,6 @@ export function ResponsiveImage({
         decoding="async"
       />
 
-      {/* Date Overlay */}
-      {date && (
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-2">
-          <p className="text-white text-xs sm:text-sm font-semibold">{date}</p>
-        </div>
-      )}
-
       {/* Loading placeholder */}
       {!isLoaded && (
         <div className="absolute inset-0 bg-gray-200 animate-pulse rounded" />
