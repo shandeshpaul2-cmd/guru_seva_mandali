@@ -38,7 +38,7 @@ export class NodeCertificateGenerator {
 
     try {
       // Read HTML template
-      let htmlTemplate = await fs.readFile(this.templatePath, 'utf-8');
+      const htmlTemplate = await fs.readFile(this.templatePath, 'utf-8');
 
       // Prepare data for injection
       const certData = {

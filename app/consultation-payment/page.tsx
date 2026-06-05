@@ -134,7 +134,7 @@ function ConsultationPaymentContent() {
         theme: {
           color: '#8B0000',
         },
-        handler: async (response: any) => {
+        handler: async (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
           try {
             // Process payment
             const paymentResponse = await fetch('/api/payments', {
@@ -197,7 +197,7 @@ function ConsultationPaymentContent() {
         }
       }
 
-      const razorpay = new (window as any).Razorpay(options)
+      const razorpay = new (window as unknown as { Razorpay: new (options: unknown) => { open: () => void } }).Razorpay(options)
       razorpay.open()
     } catch (error) {
       console.error('Payment error:', error)

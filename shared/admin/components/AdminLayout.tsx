@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Heart,
   Calendar,
+  Image as ImageIcon,
   LogOut,
   Menu,
   X
@@ -73,6 +74,11 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
       href: '/admin/bookings',
       icon: Calendar,
       label: 'Pooja Bookings',
+    },
+    {
+      href: '/admin/gallery',
+      icon: ImageIcon,
+      label: 'Gallery',
     },
   ]
 

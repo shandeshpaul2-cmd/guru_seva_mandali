@@ -11,6 +11,27 @@ datasource db {
 }
 
 // ============================================================
+// GALLERY MEDIA (admin-managed, Cloudinary-backed)
+// ============================================================
+
+model GalleryItem {
+  id              String   @id @default(cuid())
+  cloudinaryId    String   @unique
+  width           Int
+  height          Int
+  bytes           Int
+  format          String
+  blurPlaceholder String   @db.Text
+  caption         String?
+  sortOrder       Int      @default(0)
+  isPublished     Boolean  @default(true)
+  uploadedAt      DateTime @default(now())
+
+  @@index([isPublished, sortOrder])
+  @@map("gallery_items")
+}
+
+// ============================================================
 // 1. USER MANAGEMENT (Simplified for current use)
 // ============================================================
 

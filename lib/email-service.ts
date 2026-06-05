@@ -1,4 +1,19 @@
-import sgMail from '@sendgrid/mail';
+import sgMail, { MailDataRequired } from '@sendgrid/mail';
+
+interface BirthDetails {
+  dateOfBirth?: string;
+  timeOfBirth?: string;
+  placeOfBirth?: string;
+}
+
+interface SendGridErrorLike {
+  response?: {
+    body?: {
+      errors?: Array<{ message?: string }>;
+    };
+  };
+  message?: string;
+}
 
 // Set the API key
 if (process.env.SENDGRID_API_KEY) {
@@ -29,7 +44,7 @@ export class EmailService {
 
       const recipientEmails = Array.isArray(options.to) ? options.to : [options.to];
 
-      const msg: any = {
+      const msg: MailDataRequired = {
         from: options.from || this.fromEmail,
         to: recipientEmails,
         subject: options.subject,
@@ -40,14 +55,17 @@ export class EmailService {
       if (options.attachments && options.attachments.length > 0) {
         msg.attachments = options.attachments
           .filter(attachment => attachment && attachment.content) // Filter out null/undefined content
-          .map(attachment => ({
-            filename: attachment.filename,
-            content: attachment.content instanceof Buffer
+          .map(attachment => {
+            const contentStr: string = Buffer.isBuffer(attachment.content)
               ? attachment.content.toString('base64')
-              : attachment.content,
-            type: attachment.contentType || 'application/octet-stream',
-            disposition: 'attachment'
-          }));
+              : attachment.content;
+            return {
+              filename: attachment.filename,
+              content: contentStr,
+              type: attachment.contentType || 'application/octet-stream',
+              disposition: 'attachment'
+            };
+          });
       }
 
       const response = await sgMail.send(msg);
@@ -55,15 +73,16 @@ export class EmailService {
       console.log('✅ Email sent successfully via SendGrid:', response[0]?.headers?.['x-message-id']);
       console.log('📧 Email sent to:', recipientEmails);
       return { success: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Email service error:', error);
 
       // Handle SendGrid specific errors
-      if (error.response) {
-        console.error('SendGrid API Error:', error.response.body);
+      const sgError = error as SendGridErrorLike;
+      if (sgError && sgError.response) {
+        console.error('SendGrid API Error:', sgError.response.body);
         return {
           success: false,
-          error: `SendGrid error: ${error.response.body?.errors?.[0]?.message || error.message}`
+          error: `SendGrid error: ${sgError.response.body?.errors?.[0]?.message || sgError.message}`
         };
       }
 
@@ -170,7 +189,7 @@ export class EmailService {
     });
   }
 
-  static async sendAstrologyConsultationNotificationToAdmin(clientName: string, consultationType: string, receiptNumber: string, scheduledDate: string, email: string, phone: string, birthDetails: any): Promise<{ success: boolean; error?: string }> {
+  static async sendAstrologyConsultationNotificationToAdmin(clientName: string, consultationType: string, receiptNumber: string, scheduledDate: string, email: string, phone: string, birthDetails?: BirthDetails): Promise<{ success: boolean; error?: string }> {
     // Admin emails disabled - prioritizing user emails only
     console.log('Admin email notification disabled for astrology consultation:', receiptNumber);
     return { success: true };
@@ -489,7 +508,7 @@ export class EmailService {
     `;
   }
 
-  private static generateAstrologyAdminNotificationTemplate(name: string, consultationType: string, receiptNumber: string, scheduledDate: string, email: string, phone: string, birthDetails: any): string {
+  private static generateAstrologyAdminNotificationTemplate(name: string, consultationType: string, receiptNumber: string, scheduledDate: string, email: string, phone: string, birthDetails?: BirthDetails): string {
     return `
       <!DOCTYPE html>
       <html>

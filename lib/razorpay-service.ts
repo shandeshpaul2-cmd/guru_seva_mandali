@@ -3,6 +3,7 @@
  */
 
 import Razorpay from 'razorpay'
+import crypto from 'crypto'
 
 export interface CreateOrderParams {
   amount: number // in paise
@@ -65,7 +66,6 @@ class RazorpayService {
 
       // Create the expected signature
       // IMPORTANT: Trim the key secret to remove any whitespace/newlines
-      const crypto = require('crypto')
       const keySecret = (process.env.RAZORPAY_KEY_SECRET || 'your_key_secret').trim()
       const expectedSignature = crypto
         .createHmac('sha256', keySecret)

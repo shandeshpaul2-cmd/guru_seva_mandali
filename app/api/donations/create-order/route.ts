@@ -28,17 +28,19 @@ export async function POST(request: NextRequest) {
     console.log('Razorpay order created successfully:', order.id)
 
     return NextResponse.json({ success: true, order })
-  } catch (error: any) {
+  } catch (error: unknown) {
+    // Razorpay SDK errors include a structured `error` field with a description
+    const err = error as { message?: string; statusCode?: number; error?: { description?: string } }
     console.error('❌ Error creating Razorpay order:', {
-      error: error.message,
-      statusCode: error.statusCode,
-      description: error.error?.description
+      error: err.message,
+      statusCode: err.statusCode,
+      description: err.error?.description
     })
 
     return NextResponse.json(
       {
         error: 'Failed to create payment order',
-        details: error.error?.description || error.message
+        details: err.error?.description || err.message
       },
       { status: 500 }
     )

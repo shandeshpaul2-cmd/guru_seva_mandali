@@ -134,7 +134,7 @@ export default function PrivacyPolicyPage() {
                 <div>
                   <h3 className="font-semibold text-gray-800">Razorpay (Payment Gateway)</h3>
                   <p className="text-sm">
-                    For secure payment processing. View Razorpay's Privacy Policy at{' '}
+                    For secure payment processing. View Razorpay&apos;s Privacy Policy at{' '}
                     <a href="https://razorpay.com/privacy/" target="_blank" rel="noopener noreferrer"
                        className="text-temple-maroon hover:underline">
                       razorpay.com/privacy
@@ -204,7 +204,7 @@ export default function PrivacyPolicyPage() {
             {/* Children's Privacy */}
             <section>
               <h2 className="font-cinzel text-2xl font-semibold text-temple-maroon mb-3">
-                8. Children's Privacy
+                8. Children&apos;s Privacy
               </h2>
               <p>
                 Our services are not directed to individuals under 18 years of age. We do not
@@ -220,7 +220,7 @@ export default function PrivacyPolicyPage() {
               </h2>
               <p>
                 We may update this Privacy Policy from time to time. We will notify you of any changes
-                by posting the new Privacy Policy on this page and updating the "Last Updated" date.
+                by posting the new Privacy Policy on this page and updating the &quot;Last Updated&quot; date.
                 Continued use of our services after changes constitutes acceptance of the updated policy.
               </p>
             </section>

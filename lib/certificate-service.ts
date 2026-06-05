@@ -234,7 +234,17 @@ class CertificateService {
   /**
    * Format donation data from existing donation record
    */
-  static formatDonationData(donation: any): CertificateData {
+  static formatDonationData(donation: {
+    name?: string;
+    donorName?: string;
+    userInfo?: { fullName?: string; phoneNumber?: string };
+    amount?: number;
+    donationAmount?: number;
+    receiptNumber?: string;
+    donationId?: string;
+    createdAt?: string | Date;
+    phoneNumber?: string;
+  }): CertificateData {
     return {
       donor_name: donation.name || donation.donorName || donation.userInfo?.fullName || '',
       amount: donation.amount || donation.donationAmount || 0,

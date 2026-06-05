@@ -66,7 +66,31 @@ export interface ProductionWhatsAppMessage {
   mediaUrl?: string;
   priority?: 'high' | 'normal' | 'low';
   deliveryCallbackUrl?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
+}
+
+export interface DonationReceiptDetails {
+  donorName: string;
+  donorPhone: string;
+  receiptNumber: string;
+  amount: number;
+  donationType: string;
+  date: string | Date;
+  paymentId?: string;
+}
+
+export interface WhatsAppConnectionDetails {
+  accountStatus?: string;
+  friendlyName?: string;
+  type?: string;
+  whatsappNumber?: string;
+  rateLimits?: {
+    perSecond: number;
+    perMinute: number;
+  };
+  testMode?: boolean;
+  metrics?: MessageMetrics;
+  error?: string;
 }
 
 export interface RateLimiter {
@@ -112,7 +136,7 @@ class ProductionWhatsAppService {
       rateLimitPerMinute: parseInt(process.env.WHATSAPP_RATE_LIMIT_PER_MINUTE || '1000'),
       businessProfileId: process.env.WHATSAPP_BUSINESS_PROFILE_ID,
       enableDeliveryReports: process.env.WHATSAPP_ENABLE_DELIVERY_REPORTS === 'true',
-      logLevel: (process.env.WHATSAPP_LOG_LEVEL as any) || 'info'
+      logLevel: (process.env.WHATSAPP_LOG_LEVEL as ProductionWhatsAppConfig['logLevel']) || 'info'
     };
 
     this.validateConfiguration();
@@ -143,7 +167,7 @@ class ProductionWhatsAppService {
   /**
    * Enhanced logging with levels
    */
-  private log(level: 'debug' | 'info' | 'warn' | 'error', message: string, data?: any): void {
+  private log(level: 'debug' | 'info' | 'warn' | 'error', message: string, data?: unknown): void {
     const levels = { debug: 0, info: 1, warn: 2, error: 3 };
     if (levels[level] >= levels[this.config.logLevel]) {
       const timestamp = new Date().toISOString();
@@ -356,7 +380,7 @@ class ProductionWhatsAppService {
    * Send donation receipt with certificate link (production version)
    */
   public async sendDonationReceipt(
-    details: any,
+    details: DonationReceiptDetails,
     pdfUrl?: string,
     certificateUrl?: string
   ): Promise<{ success: boolean; receiptMessageId?: string; certificateMessageId?: string; error?: string }> {
@@ -373,15 +397,16 @@ class ProductionWhatsAppService {
 
       // Send receipt message with PDF certificate attachment
       // Note: details.date can be either an ISO string, Date object, or pre-formatted string
+      const dateAsString: string = details.date instanceof Date ? details.date.toISOString() : details.date;
       let formattedDateStr: string;
       try {
         const dateObj = new Date(details.date);
         // Check if date is valid
         formattedDateStr = !isNaN(dateObj.getTime())
           ? dateObj.toLocaleDateString('en-IN')
-          : details.date; // Use as-is if already formatted
+          : dateAsString; // Use as-is if already formatted
       } catch {
-        formattedDateStr = details.date; // Use as-is if parsing fails
+        formattedDateStr = dateAsString; // Use as-is if parsing fails
       }
 
       const receiptMessage = `🙏 *Donation Receipt* 🙏
@@ -486,7 +511,7 @@ For any queries, please contact: ${this.adminPhoneNumber}
   /**
    * Send admin notification
    */
-  private async sendAdminNotification(details: any): Promise<void> {
+  private async sendAdminNotification(details: DonationReceiptDetails): Promise<void> {
     const adminMessage = `🙏 *New Donation Received* 🙏
 
 📝 *Donor Details:*
@@ -521,7 +546,7 @@ For any queries, please contact: ${this.adminPhoneNumber}
   /**
    * Test connection and configuration
    */
-  public async testConnection(): Promise<{ success: boolean; details: any }> {
+  public async testConnection(): Promise<{ success: boolean; details: WhatsAppConnectionDetails }> {
     try {
       const response = await fetch(
         `https://api.twilio.com/2010-04-01/Accounts/${this.config.accountSid}.json`,

@@ -11,7 +11,14 @@ function ConfirmationContent() {
   const router = useRouter()
   const bookingNumber = searchParams.get('booking') || ''
 
-  const [bookingDetails, setBookingDetails] = useState<any>(null)
+  interface BookingDetails {
+    bookingNumber: string
+    poojaName: string
+    devoteeName: string
+    devoteePhone: string
+  }
+
+  const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {

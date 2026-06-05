@@ -30,7 +30,7 @@ export function middleware(request: NextRequest) {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: https: blob:",
     "font-src 'self' data: https://fonts.gstatic.com",
-    "connect-src 'self' blob: https://www.gurusevamandali.com https://api.razorpay.com https://merchant.razorpay.com https://lumberjack.razorpay.com https://vercel.live https://www.gstatic.com",
+    "connect-src 'self' blob: https://www.gurusevamandali.com https://api.razorpay.com https://merchant.razorpay.com https://lumberjack.razorpay.com https://vercel.live https://www.gstatic.com https://api.cloudinary.com https://res.cloudinary.com",
     "frame-src 'self' https://api.razorpay.com https://vercel.live",
     "object-src 'none'",
     "base-uri 'self'",

@@ -369,9 +369,9 @@ export default function RefundPolicyPage() {
                 8. No-Show Policy
               </h2>
               <p>
-                If you fail to attend a scheduled consultation or do not respond to the temple's attempts
+                If you fail to attend a scheduled consultation or do not respond to the temple&apos;s attempts
                 to contact you for scheduling within 30 days of booking, the booking will be considered
-                a "no-show" and no refund will be provided.
+                a &quot;no-show&quot; and no refund will be provided.
               </p>
             </section>
 
@@ -439,7 +439,7 @@ export default function RefundPolicyPage() {
               </h2>
               <p>
                 This policy may be updated from time to time. Changes will be posted on this page with
-                an updated "Last Updated" date. The policy applicable at the time of your booking will
+                an updated &quot;Last Updated&quot; date. The policy applicable at the time of your booking will
                 govern your transaction.
               </p>
             </section>

@@ -118,7 +118,7 @@ export default function TermsConditionsPage() {
                 <li>Maintain the confidentiality of your account and booking details</li>
                 <li>Use the platform only for lawful purposes</li>
                 <li>Not impersonate any person or entity</li>
-                <li>Not interfere with or disrupt the platform's functionality</li>
+                <li>Not interfere with or disrupt the platform&apos;s functionality</li>
                 <li>Not attempt unauthorized access to our systems</li>
                 <li>Respect the religious and cultural nature of our services</li>
               </ul>
@@ -194,7 +194,7 @@ export default function TermsConditionsPage() {
                   <h3 className="font-semibold text-gray-800">6.3 80G Tax Exemption</h3>
                   <p>
                     Donations made to the temple may be eligible for tax deductions under Section 80G of the
-                    Income Tax Act, 1961 (subject to the temple's 80G registration status). Please consult
+                    Income Tax Act, 1961 (subject to the temple&apos;s 80G registration status). Please consult
                     your tax advisor for specific guidance.
                   </p>
                 </div>
@@ -268,7 +268,7 @@ export default function TermsConditionsPage() {
                 10. Disclaimer of Warranties
               </h2>
               <p className="mb-3">
-                Our services are provided on an "as is" and "as available" basis. While we strive to ensure
+                Our services are provided on an &quot;as is&quot; and &quot;as available&quot; basis. While we strive to ensure
                 accuracy and reliability, we make no warranties or representations regarding:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -339,7 +339,7 @@ export default function TermsConditionsPage() {
               </h2>
               <p>
                 We reserve the right to modify these Terms at any time. Changes will be posted on this page
-                with an updated "Last Updated" date. Your continued use of our services after changes
+                with an updated &quot;Last Updated&quot; date. Your continued use of our services after changes
                 constitutes acceptance of the modified Terms. We recommend reviewing these Terms periodically.
               </p>
             </section>
