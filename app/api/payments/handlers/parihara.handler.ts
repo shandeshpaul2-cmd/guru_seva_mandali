@@ -84,7 +84,6 @@ async function sendPariharaNotifications(
 ): Promise<void> {
   // Send WhatsApp notification
   try {
-    console.log('📱 Sending parihara pooja confirmation with template')
     const formattedPhone = booking.userPhone.startsWith('+')
       ? booking.userPhone
       : `+91${booking.userPhone}`
@@ -99,10 +98,8 @@ async function sendPariharaNotifications(
       booking.razorpayPaymentId || `pay_${timestamp}`
     )
 
-    if (whatsappResult.success) {
-      console.log('✅ Parihara pooja WhatsApp notifications sent with templates')
-    } else {
-      console.error('❌ Parihara pooja template failed:', whatsappResult.error)
+    if (!whatsappResult.success) {
+      console.error('Parihara pooja template failed:', whatsappResult.error)
     }
   } catch (error) {
     console.error('Failed to send parihara pooja WhatsApp notifications:', error)
@@ -121,9 +118,7 @@ async function sendPariharaNotifications(
         booking.poojaPrice
       )
 
-      if (emailResult.success) {
-        console.log('Parihara pooja confirmation email sent successfully to:', devoteeEmail)
-      } else {
+      if (!emailResult.success) {
         console.error('Failed to send parihara pooja confirmation email:', emailResult.error)
       }
     }
@@ -138,9 +133,7 @@ async function sendPariharaNotifications(
       booking.userPhone
     )
 
-    if (adminEmailResult.success) {
-      console.log('Parihara pooja notification email sent to admin successfully')
-    } else {
+    if (!adminEmailResult.success) {
       console.error('Failed to send parihara pooja notification email to admin:', adminEmailResult.error)
     }
   } catch (emailError) {

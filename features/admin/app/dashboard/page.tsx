@@ -3,18 +3,16 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
-  Home,
-  Users,
   Calendar,
   DollarSign,
   Activity,
-  LogOut,
   BookOpen,
   Heart,
   BarChart3,
   Clock,
   CheckCircle,
   AlertCircle,
+  AlertTriangle,
   RefreshCw
 } from 'lucide-react'
 import { useAdminAuth } from '@/shared/admin/contexts/AdminAuthContext'
@@ -80,6 +78,7 @@ export default function AdminDashboard() {
   const { logout } = useAdminAuth()
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
 
   useEffect(() => {
@@ -87,15 +86,20 @@ export default function AdminDashboard() {
   }, [])
 
   const fetchDashboardData = async () => {
+    setLoadError(null)
     try {
       const response = await fetch('/api/admin/dashboard')
       if (response.ok) {
         const data = await response.json()
         setDashboardData(data)
         setLastRefresh(new Date())
+      } else {
+        const data = await response.json().catch(() => null)
+        setLoadError(data?.error ?? 'Failed to load dashboard data.')
       }
     } catch (error) {
       console.error('Error fetching dashboard data:', error)
+      setLoadError('Failed to load dashboard data.')
     } finally {
       setIsLoading(false)
     }
@@ -118,20 +122,6 @@ export default function AdminDashboard() {
       minute: '2-digit'
     })
   }
-
-  const StatCard = ({ title, value, icon: Icon, color }: any) => (
-    <div className="bg-white rounded-lg shadow-sm p-2 border border-gray-100">
-      <div className="flex items-center justify-between">
-        <div className={`p-1 rounded-lg ${color}`}>
-          <Icon className="w-2.5 h-2.5 text-white" />
-        </div>
-      </div>
-      <div className="mt-1">
-        <p className="text-gray-600 text-xs leading-tight">{title}</p>
-        <p className="text-sm font-bold text-gray-900">{value}</p>
-      </div>
-    </div>
-  )
 
   if (isLoading) {
     return (
@@ -164,13 +154,28 @@ export default function AdminDashboard() {
         </div>
       </div>
 
+      {loadError && (
+        <div className="mb-6 px-4 py-3 rounded-lg bg-red-50 border border-red-200 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-sm text-red-700">
+            <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+            <span>{loadError}</span>
+          </div>
+          <button
+            onClick={fetchDashboardData}
+            className="px-3 py-1 text-xs font-semibold text-red-700 border border-red-300 rounded-md hover:bg-red-100 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
       <div>
         {/* Quick Stats Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-8">
           <div className="bg-white rounded-xl shadow-sm border border-temple-gold/20 p-3 sm:p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-2 sm:mb-4">
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-temple-cream/50 rounded-lg flex items-center justify-center">
-                <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-temple-maroon" />
+                <Heart className="w-5 h-5 text-temple-maroon" />
               </div>
             </div>
             <h3 className="text-gray-600 text-xs sm:text-sm mb-1">Donations</h3>
@@ -181,7 +186,7 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-xl shadow-sm border border-temple-gold/20 p-3 sm:p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-2 sm:mb-4">
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-temple-cream/50 rounded-lg flex items-center justify-center">
-                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-temple-maroon" />
+                <Calendar className="w-5 h-5 text-temple-maroon" />
               </div>
             </div>
             <h3 className="text-gray-600 text-xs sm:text-sm mb-1">Bookings</h3>
@@ -192,7 +197,7 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-xl shadow-sm border border-temple-gold/20 p-3 sm:p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-2 sm:mb-4">
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-temple-cream/50 rounded-lg flex items-center justify-center">
-                <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-temple-maroon" />
+                <DollarSign className="w-5 h-5 text-temple-maroon" />
               </div>
             </div>
             <h3 className="text-gray-600 text-xs sm:text-sm mb-1">Revenue</h3>
@@ -203,7 +208,7 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-xl shadow-sm border border-temple-gold/20 p-3 sm:p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-2 sm:mb-4">
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-temple-cream/50 rounded-lg flex items-center justify-center">
-                <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-temple-maroon" />
+                <Activity className="w-5 h-5 text-temple-maroon" />
               </div>
             </div>
             <h3 className="text-gray-600 text-xs sm:text-sm mb-1">Today</h3>
@@ -271,6 +276,11 @@ export default function AdminDashboard() {
               </Link>
             </div>
             <div className="space-y-2 sm:space-y-3">
+              {(dashboardData?.recentActivities.bookings.length ?? 0) === 0 && (
+                <p className="text-xs sm:text-sm text-gray-500 italic py-2">
+                  No recent bookings yet.
+                </p>
+              )}
               {dashboardData?.recentActivities.bookings.slice(0, 3).map((booking) => (
                 <div key={booking.id} className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 bg-temple-cream/30 rounded-lg border border-temple-gold/10">
                   <div className="flex-shrink-0 mt-0.5">
@@ -314,6 +324,11 @@ export default function AdminDashboard() {
               </Link>
             </div>
             <div className="space-y-2 sm:space-y-3">
+              {(dashboardData?.recentActivities.donations.length ?? 0) === 0 && (
+                <p className="text-xs sm:text-sm text-gray-500 italic py-2">
+                  No recent donations yet.
+                </p>
+              )}
               {dashboardData?.recentActivities.donations.slice(0, 3).map((donation) => (
                 <div key={donation.id} className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 bg-temple-cream/30 rounded-lg border border-temple-gold/10">
                   <div className="flex-shrink-0 mt-0.5">

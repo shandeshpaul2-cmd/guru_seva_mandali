@@ -5,6 +5,7 @@ import {
   buildFullUrl,
   buildThumbnailUrl,
 } from '../../../../lib/cloudinary'
+import { galleryListQuerySchema } from '@/types/schemas/admin'
 
 const createSchema = z.object({
   cloudinaryId: z.string().min(1),
@@ -16,8 +17,20 @@ const createSchema = z.object({
   caption: z.string().optional(),
 })
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url)
+    const parsed = galleryListQuerySchema.safeParse(
+      Object.fromEntries(searchParams)
+    )
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid input', details: parsed.error.format() },
+        { status: 400 }
+      )
+    }
+
     const items = await prisma.galleryItem.findMany({
       orderBy: [{ sortOrder: 'asc' }, { uploadedAt: 'desc' }],
     })
@@ -30,7 +43,7 @@ export async function GET() {
 
     return NextResponse.json(enriched)
   } catch (error) {
-    console.error('Error fetching gallery items:', error)
+    console.error('[admin/gallery] GET failed:', error)
     return NextResponse.json(
       { error: 'Failed to fetch gallery items' },
       { status: 500 }
@@ -74,7 +87,7 @@ export async function POST(request: NextRequest) {
       fullUrl: buildFullUrl(item.cloudinaryId),
     })
   } catch (error) {
-    console.error('Error creating gallery item:', error)
+    console.error('[admin/gallery] POST failed:', error)
     return NextResponse.json(
       { error: 'Failed to create gallery item' },
       { status: 500 }

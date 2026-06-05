@@ -25,8 +25,6 @@ export function verifyRazorpaySignature(fields: RazorpayVerificationFields): Ver
     return { isValid: true }
   }
 
-  console.log('Verifying Razorpay signature...')
-
   const isValid = razorpayService.verifyPaymentSignature({
     razorpay_order_id: razorpayOrderId,
     razorpay_payment_id: razorpayPaymentId,
@@ -41,7 +39,6 @@ export function verifyRazorpaySignature(fields: RazorpayVerificationFields): Ver
     }
   }
 
-  console.log('✅ Razorpay signature verified successfully')
   return { isValid: true }
 }
 

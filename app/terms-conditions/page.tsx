@@ -9,7 +9,7 @@ export default function TermsConditionsPage() {
   const { t } = useLanguage()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-temple-cream via-white to-orange-50">
+    <div className="min-h-screen bg-temple-cream">
       <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-6">
           {/* Back Button */}
@@ -26,12 +26,12 @@ export default function TermsConditionsPage() {
 
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-xl border-2 border-temple-gold/20 overflow-hidden">
-          <div className="bg-gradient-to-r from-temple-maroon to-orange-900 text-white px-6 py-8 sm:px-8">
+          <div className="bg-gradient-to-r from-temple-maroon to-red-700 text-white px-6 py-8 sm:px-8">
             <h1 className="font-cinzel text-3xl sm:text-4xl font-bold mb-2">
               {t.termsConditionsTitle}
             </h1>
-            <p className="text-orange-100">
-              Last Updated: {new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
+            <p className="text-temple-cream">
+              Last Updated: January 2026
             </p>
           </div>
 

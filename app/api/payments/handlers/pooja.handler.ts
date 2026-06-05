@@ -50,7 +50,6 @@ export async function handlePooja(ctx: HandlerContext): Promise<NextResponse> {
             displayOrder: poojaId,
           }
         })
-        console.log(`Created pooja service: ${serviceName} with ID: ${poojaId}`)
       }
     }
 
@@ -125,7 +124,6 @@ async function sendPoojaNotifications(
 ): Promise<void> {
   // Send WhatsApp notification
   try {
-    console.log('📱 Sending pooja booking confirmation with template')
     const formattedPhone = booking.userPhone.startsWith('+')
       ? booking.userPhone
       : `+91${booking.userPhone}`
@@ -142,10 +140,8 @@ async function sendPoojaNotifications(
       booking.nakshatra || undefined
     )
 
-    if (whatsappResult.success) {
-      console.log('✅ Pooja booking WhatsApp notifications sent with templates')
-    } else {
-      console.error('❌ Pooja booking template failed:', whatsappResult.error)
+    if (!whatsappResult.success) {
+      console.error('Pooja booking template failed:', whatsappResult.error)
     }
   } catch (error) {
     console.error('Failed to send pooja booking WhatsApp notifications:', error)
@@ -164,9 +160,7 @@ async function sendPoojaNotifications(
         booking.poojaPrice
       )
 
-      if (emailResult.success) {
-        console.log('Pooja booking confirmation email sent successfully to:', devoteeEmail)
-      } else {
+      if (!emailResult.success) {
         console.error('Failed to send pooja booking confirmation email:', emailResult.error)
       }
     }
@@ -181,9 +175,7 @@ async function sendPoojaNotifications(
       booking.userPhone
     )
 
-    if (adminEmailResult.success) {
-      console.log('Pooja booking notification email sent to admin successfully')
-    } else {
+    if (!adminEmailResult.success) {
       console.error('Failed to send pooja booking notification email to admin:', adminEmailResult.error)
     }
   } catch (emailError) {

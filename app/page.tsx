@@ -1,11 +1,16 @@
 'use client'
 
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { useState, useEffect } from 'react'
 import { LanguageSelector } from '@/shared/components/common/LanguageSelector'
 import { LocationCard } from '@/shared/components/common/LocationCard'
-import Temple3DModel from '@/shared/components/common/Temple3DModel'
 import { ArrowRight, Phone, Heart, Calendar, Star, Sun } from 'lucide-react'
+
+const Temple3DModel = dynamic(
+  () => import('@/shared/components/common/Temple3DModel'),
+  { ssr: false }
+)
 import { useLanguage } from '@/shared/contexts/contexts/LanguageContext'
 import { MediaCarousel, MediaItem } from '@/shared/components/carousel/MediaCarousel'
 

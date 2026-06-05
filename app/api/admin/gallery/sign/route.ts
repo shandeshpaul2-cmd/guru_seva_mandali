@@ -26,7 +26,7 @@ export async function POST() {
       transformation: UPLOAD_TRANSFORMATION,
     })
   } catch (error) {
-    console.error('Error signing Cloudinary upload params:', error)
+    console.error('[admin/gallery/sign] POST failed:', error)
     return NextResponse.json(
       { error: 'Failed to sign upload params' },
       { status: 500 }

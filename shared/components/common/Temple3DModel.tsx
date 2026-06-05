@@ -74,7 +74,6 @@ function Temple3DModelContent({
       setContainerHeight('500px')
     }
 
-    console.log('Loading 3D model from:', modelPath)
   }, [modelPath])
 
   const handleCanvasCreated = (state: any) => {
@@ -85,7 +84,6 @@ function Temple3DModelContent({
     setTimeout(() => {
       setIsLoading(false)
     }, 500)
-    console.log('3D Canvas created successfully')
   }
 
   if (error) {

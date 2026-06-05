@@ -31,7 +31,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ ok: true })
   } catch (error) {
-    console.error('Error reordering gallery items:', error)
+    console.error('[admin/gallery/reorder] PATCH failed:', error)
     return NextResponse.json(
       { error: 'Failed to reorder gallery items' },
       { status: 500 }

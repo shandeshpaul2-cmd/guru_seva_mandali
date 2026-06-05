@@ -166,7 +166,6 @@ export default function PaymentPortal({ items, userInfo, onBack, onSuccess, onEr
         },
         handler: async (response: any) => {
           try {
-            console.log('Razorpay payment successful, response:', response)
             await processPayment(
               response.razorpay_payment_id,
               response.razorpay_order_id,
@@ -192,9 +191,6 @@ export default function PaymentPortal({ items, userInfo, onBack, onSuccess, onEr
 
   const processPayment = async (paymentId: string, orderId: string, signature: string) => {
     try {
-      console.log('Processing payment with:', { paymentId, orderId, signature })
-
-      // Determine payment type from items
       const paymentType = items[0]?.metadata?.paymentType || (items[0]?.type === 'donation' ? 'donation' : 'pooja')
 
       const response = await fetch('/api/payments', {
@@ -213,16 +209,13 @@ export default function PaymentPortal({ items, userInfo, onBack, onSuccess, onEr
       })
 
       const data = await response.json()
-      console.log('Payment API response:', data)
 
       if (!response.ok) {
         console.error('Payment API error:', data)
         throw new Error(data.error || 'Payment processing failed')
       }
 
-      // Receipt number can be at top level or inside data object
       const finalReceiptNumber = data.receiptNumber || data.data?.receiptNumber
-      console.log('Final receipt number:', finalReceiptNumber)
 
       if (!finalReceiptNumber) {
         throw new Error('No receipt number received from payment API')

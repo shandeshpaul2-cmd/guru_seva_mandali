@@ -28,15 +28,6 @@ export async function POST(request: NextRequest) {
       razorpaySignature
     } = body
 
-    console.log('Payment request received:', {
-      paymentType,
-      amount,
-      userInfo,
-      items: body.items,
-      razorpayPaymentId,
-      razorpayOrderId
-    })
-
     // Verify Razorpay signature if provided
     const verificationResult = verifyRazorpaySignature({
       razorpayPaymentId,

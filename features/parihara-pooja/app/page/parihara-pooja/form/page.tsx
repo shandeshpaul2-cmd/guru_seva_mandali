@@ -252,11 +252,8 @@ function PariharaBookingFormPageContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Parihara form submitted:', formData)
-    console.log('Service:', service)
 
     if (!validateForm()) {
-      console.log('Form validation failed:', errors)
       return
     }
 
@@ -385,6 +382,7 @@ function PariharaBookingFormPageContent() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
+                    aria-label="Name"
                     className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-temple-gold focus:border-transparent ${
                       errors.name ? 'border-red-500' : 'border-gray-300'
                     }`}
@@ -404,6 +402,7 @@ function PariharaBookingFormPageContent() {
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
+                    aria-label="Phone Number"
                     className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-temple-gold focus:border-transparent ${
                       errors.phone ? 'border-red-500' : 'border-gray-300'
                     }`}
@@ -470,6 +469,7 @@ function PariharaBookingFormPageContent() {
                   type="date"
                   value={formData.date}
                   onChange={(e) => handleInputChange('date', e.target.value)}
+                  aria-label="Preferred Date"
                   min={new Date().toISOString().split('T')[0]}
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-temple-gold focus:border-transparent ${
                     errors.date ? 'border-red-500' : 'border-gray-300'
@@ -507,6 +507,7 @@ function PariharaBookingFormPageContent() {
               <textarea
                 value={formData.specificIssue}
                 onChange={(e) => handleInputChange('specificIssue', e.target.value)}
+                aria-label="Specific Issue or Challenge"
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-temple-gold focus:border-transparent ${
                   errors.specificIssue ? 'border-red-500' : 'border-gray-300'
                 }`}

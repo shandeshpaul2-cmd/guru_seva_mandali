@@ -2,6 +2,7 @@
 
 import { useCallback, useRef, useState } from 'react'
 import { Upload, Check, AlertCircle, ArrowRight, X } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/shared/components/ui/Button'
 import type { GalleryItem, SignResponse, UploadJob } from './types'
 import {
@@ -41,7 +42,10 @@ export function UploadTab({ onUploaded, onGoToLibrary }: UploadTabProps) {
         updateJob(job.id, { progress: 15 })
 
         const signRes = await fetch('/api/admin/gallery/sign', { method: 'POST' })
-        if (!signRes.ok) throw new Error('Failed to obtain upload signature')
+        if (!signRes.ok) {
+          const data = await signRes.json().catch(() => null)
+          throw new Error(data?.error ?? 'Failed to obtain upload signature')
+        }
         const sign: SignResponse = await signRes.json()
         updateJob(job.id, { progress: 25 })
 
@@ -64,16 +68,22 @@ export function UploadTab({ onUploaded, onGoToLibrary }: UploadTabProps) {
             blurPlaceholder,
           }),
         })
-        if (!saveRes.ok) throw new Error('Failed to save metadata')
+        if (!saveRes.ok) {
+          const data = await saveRes.json().catch(() => null)
+          throw new Error(data?.error ?? 'Failed to save metadata')
+        }
         const saved: GalleryItem = await saveRes.json()
 
         updateJob(job.id, { status: 'success', progress: 100, savedItem: saved })
         onUploadedRef.current(saved)
+        toast.success(`Uploaded ${job.file.name}`)
       } catch (err) {
+        const message = err instanceof Error ? err.message : 'Upload failed'
         updateJob(job.id, {
           status: 'error',
-          errorMessage: err instanceof Error ? err.message : 'Upload failed',
+          errorMessage: message,
         })
+        toast.error(message)
       } finally {
         activeCountRef.current -= 1
         pump()

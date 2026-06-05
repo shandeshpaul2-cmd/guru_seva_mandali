@@ -3,6 +3,7 @@
 import { Suspense, useState, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Script from 'next/script'
 import { ArrowLeft, Phone, AlertCircle, IndianRupee, Calendar, User, Star, Heart } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -212,7 +213,8 @@ function ConsultationPaymentContent() {
   const isParihara = paymentType === 'parihara_pooja'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
+    <div className="min-h-screen bg-temple-cream">
+      <Script src="https://apis.google.com/js/platform.js" strategy="lazyOnload" />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl py-8">
         {/* Header */}
         <div className="mb-6">
@@ -242,18 +244,18 @@ function ConsultationPaymentContent() {
 
           <div className="p-6 sm:p-8 space-y-6">
             {/* Important Warning */}
-            <div className="bg-gradient-to-r from-orange-50 to-red-50 border-2 border-orange-300 rounded-xl p-5">
+            <div className="bg-temple-cream border-2 border-temple-gold/40 rounded-xl p-5">
               <div className="flex items-start gap-3">
-                <AlertCircle className="w-6 h-6 text-orange-600 flex-shrink-0 mt-1" />
+                <AlertCircle className="w-6 h-6 text-temple-maroon flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="font-bold text-orange-900 mb-2 text-lg">
+                  <h3 className="font-bold text-temple-maroon mb-2 text-lg">
                     ⚠️ Important: Consult First, Then Pay
                   </h3>
-                  <p className="text-orange-800 text-sm leading-relaxed mb-3">
+                  <p className="text-gray-700 text-sm leading-relaxed mb-3">
                     Please call our priest and discuss your {isParihara ? 'parihara requirements' : 'birth chart analysis'} before
                     making the payment. The consultation will help determine the exact remedies needed and the appropriate amount.
                   </p>
-                  <p className="text-orange-700 text-xs font-medium">
+                  <p className="text-temple-maroon text-xs font-medium">
                     💡 After the consultation, return to this page to enter the agreed amount and complete your payment.
                   </p>
                 </div>
@@ -261,30 +263,30 @@ function ConsultationPaymentContent() {
             </div>
 
             {/* Call Button */}
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-5">
+            <div className="bg-temple-cream border-2 border-temple-gold/40 rounded-xl p-5">
               <div className="text-center">
-                <h3 className="font-bold text-green-900 mb-3 text-lg">
+                <h3 className="font-bold text-temple-maroon mb-3 text-lg">
                   📞 Call for Consultation
                 </h3>
-                <p className="text-green-800 text-sm mb-4">
+                <p className="text-gray-700 text-sm mb-4">
                   Our priest is available to discuss your requirements
                 </p>
                 <button
                   onClick={handleCallClick}
-                  className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-4 px-6 rounded-xl font-bold text-lg hover:from-green-700 hover:to-green-800 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-3"
+                  className="w-full bg-gradient-to-r from-temple-maroon to-red-700 text-white py-4 px-6 rounded-xl font-bold text-lg hover:from-temple-maroon hover:to-red-800 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-3"
                 >
                   <Phone className="w-6 h-6" />
                   Call Now: {templePhone}
                 </button>
-                <p className="text-green-600 text-xs mt-2">
+                <p className="text-temple-gold text-xs mt-2">
                   Available: 8:00 AM - 8:00 PM (IST)
                 </p>
               </div>
             </div>
 
             {/* Booking Details Summary */}
-            <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-              <h3 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
+            <div className="bg-temple-cream rounded-xl p-4 border border-temple-gold/30">
+              <h3 className="font-bold text-temple-maroon mb-3 flex items-center gap-2">
                 <User className="w-5 h-5" />
                 Booking Details
               </h3>
@@ -324,8 +326,8 @@ function ConsultationPaymentContent() {
             </div>
 
             {/* Amount Input */}
-            <div className="bg-purple-50 rounded-xl p-5 border-2 border-purple-200">
-              <h3 className="font-bold text-purple-900 mb-4 text-lg flex items-center gap-2">
+            <div className="bg-temple-cream rounded-xl p-5 border-2 border-temple-gold/40">
+              <h3 className="font-bold text-temple-maroon mb-4 text-lg flex items-center gap-2">
                 <IndianRupee className="w-5 h-5" />
                 Enter Payment Amount
               </h3>
@@ -345,13 +347,14 @@ function ConsultationPaymentContent() {
                         setAmount(e.target.value)
                         setError('')
                       }}
+                      aria-label="Payment amount"
                       min="100"
                       step="1"
                       placeholder="Enter amount (minimum ₹100)"
                       className={`w-full pl-12 pr-4 py-4 rounded-xl border-2 text-xl font-semibold ${
                         error
                           ? 'border-red-400 focus:border-red-500 bg-red-50'
-                          : 'border-purple-300 focus:border-purple-500'
+                          : 'border-temple-gold/40 focus:border-temple-gold'
                       } focus:outline-none transition-colors`}
                     />
                   </div>
@@ -369,14 +372,14 @@ function ConsultationPaymentContent() {
             <button
               onClick={handleProceedToPayment}
               disabled={!amount}
-              className="w-full bg-gradient-to-r from-temple-maroon to-red-700 text-white py-5 px-6 rounded-xl font-bold text-xl hover:from-temple-gold hover:to-orange-600 hover:text-temple-maroon transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-temple-maroon disabled:hover:to-red-700 disabled:hover:text-white shadow-lg transform hover:scale-105"
+              className="w-full bg-gradient-to-r from-temple-maroon to-red-700 text-white py-5 px-6 rounded-xl font-bold text-xl hover:from-temple-gold hover:to-temple-orange hover:text-temple-maroon transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-temple-maroon disabled:hover:to-red-700 disabled:hover:text-white shadow-lg transform hover:scale-105"
             >
               {amount ? `Proceed to Pay ₹${parseFloat(amount).toLocaleString('en-IN')}` : 'Enter Amount to Continue'}
             </button>
 
             {/* Info Note */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-              <p className="text-xs text-blue-800">
+            <div className="bg-temple-cream border border-temple-gold/30 rounded-lg p-4 text-center">
+              <p className="text-xs text-temple-maroon">
                 <strong>Secure Payment:</strong> You will be redirected to Razorpay for secure payment processing
               </p>
             </div>
@@ -390,7 +393,7 @@ function ConsultationPaymentContent() {
 export default function ConsultationPaymentPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 flex items-center justify-center">
+      <div className="min-h-screen bg-temple-cream flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-temple-maroon border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading payment page...</p>

@@ -154,12 +154,6 @@ export class EmailService {
     }
   }
 
-  static async sendDonationNotificationToAdmin(donorName: string, amount: number, receiptNumber: string, poojaName: string, email: string, phone: string, gotra: string): Promise<{ success: boolean; error?: string }> {
-    // Admin emails disabled - prioritizing user emails only
-    console.log('Admin email notification disabled for donation:', receiptNumber);
-    return { success: true };
-  }
-
   static async sendPoojaBookingConfirmation(devoteeEmail: string, devoteeName: string, poojaName: string, receiptNumber: string, scheduledDate: string, amount: number): Promise<{ success: boolean; error?: string }> {
     const subject = `Pooja Booking Confirmation - ${receiptNumber}`;
     const html = this.generatePoojaBookingTemplate(devoteeName, poojaName, receiptNumber, scheduledDate, amount);

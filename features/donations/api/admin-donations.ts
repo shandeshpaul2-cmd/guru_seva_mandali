@@ -1,29 +1,47 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
+import {
+  donationsListQuerySchema,
+  donationActionSchema,
+} from '@/types/schemas/admin'
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const page = parseInt(searchParams.get('page') || '1')
-    const limit = parseInt(searchParams.get('limit') || '10')
-    const status = searchParams.get('status')
-    const search = searchParams.get('search')
-    const sortBy = searchParams.get('sortBy') || 'createdAt'
-    const sortOrder = searchParams.get('sortOrder') || 'desc'
-    const startDate = searchParams.get('startDate')
-    const endDate = searchParams.get('endDate')
+    const parsed = donationsListQuerySchema.safeParse(
+      Object.fromEntries(searchParams)
+    )
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid input', details: parsed.error.format() },
+        { status: 400 }
+      )
+    }
+
+    const {
+      page,
+      limit,
+      status,
+      search,
+      sortBy,
+      sortOrder,
+      startDate,
+      endDate,
+    } = parsed.data
 
     const skip = (page - 1) * limit
 
     // Build where clause for donations
-    const donationWhere: any = {}
+    const where: Prisma.DonationWhereInput = {}
 
     if (status && status !== 'all') {
-      donationWhere.paymentStatus = status
+      where.paymentStatus = status
     }
 
     if (search) {
-      donationWhere.OR = [
+      where.OR = [
         { receiptNumber: { contains: search } },
         { donationType: { contains: search } },
         { donationPurpose: { contains: search } },
@@ -34,161 +52,101 @@ export async function GET(request: NextRequest) {
             OR: [
               { name: { contains: search } },
               { phone: { contains: search } },
-              { email: { contains: search } }
-            ]
-          }
-        }
+              { email: { contains: search } },
+            ],
+          },
+        },
       ]
     }
 
-    // Date range filter
     if (startDate || endDate) {
-      donationWhere.createdAt = {}
-      if (startDate) {
-        donationWhere.createdAt.gte = new Date(startDate)
-      }
-      if (endDate) {
-        donationWhere.createdAt.lte = new Date(endDate)
-      }
+      where.createdAt = {}
+      if (startDate) where.createdAt.gte = new Date(startDate)
+      if (endDate) where.createdAt.lte = new Date(endDate)
     }
 
-    // Build where clause for pooja bookings
-    const bookingWhere: any = {}
+    // Run paginated query, true count, and aggregates in parallel.
+    const [donations, total, statusGroups, typeGroups, totalsAgg, successAgg] =
+      await Promise.all([
+        prisma.donation.findMany({
+          where,
+          orderBy: { [sortBy]: sortOrder },
+          skip,
+          take: limit,
+          include: {
+            user: {
+              select: { id: true, name: true, phone: true, email: true },
+            },
+          },
+        }),
+        prisma.donation.count({ where }),
+        prisma.donation.groupBy({
+          by: ['paymentStatus'],
+          where,
+          _count: { id: true },
+          _sum: { amount: true },
+        }),
+        prisma.donation.groupBy({
+          by: ['donationType'],
+          where,
+          _count: { id: true },
+          _sum: { amount: true },
+          orderBy: { _count: { id: 'desc' } },
+        }),
+        prisma.donation.aggregate({ where, _sum: { amount: true } }),
+        prisma.donation.aggregate({
+          where: { ...where, paymentStatus: 'SUCCESS' },
+          _sum: { amount: true },
+        }),
+      ])
 
-    if (status && status !== 'all') {
-      bookingWhere.paymentStatus = status
-    }
+    // Project rows into the shape the admin UI expects.
+    const projected = donations.map((d) => ({
+      ...d,
+      type: 'donation' as const,
+      userName: d.user?.name || 'Anonymous',
+      userPhone: d.user?.phone || 'N/A',
+      userEmail: d.user?.email || null,
+    }))
 
-    if (search) {
-      bookingWhere.OR = [
-        { receiptNumber: { contains: search } },
-        { bookingNumber: { contains: search } },
-        { poojaName: { contains: search } },
-        { userName: { contains: search } },
-        { userPhone: { contains: search } },
-        { userEmail: { contains: search } },
-        { razorpayOrderId: { contains: search } },
-        { razorpayPaymentId: { contains: search } }
-      ]
-    }
-
-    // Date range filter for bookings
-    if (startDate || endDate) {
-      bookingWhere.createdAt = {}
-      if (startDate) {
-        bookingWhere.createdAt.gte = new Date(startDate)
-      }
-      if (endDate) {
-        bookingWhere.createdAt.lte = new Date(endDate)
-      }
-    }
-
-    // Get donations from database
-    const donations = await prisma.donation.findMany({
-      where: donationWhere,
-      orderBy: { [sortBy]: sortOrder },
-      skip,
-      take: limit,
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            phone: true,
-            email: true
-          }
+    const statusCounts = statusGroups.reduce(
+      (acc, item) => {
+        acc[item.paymentStatus] = {
+          count: item._count.id,
+          amount: item._sum.amount || 0,
         }
-      }
-    })
+        return acc
+      },
+      {} as Record<string, { count: number; amount: number }>
+    )
 
-    // Get pooja bookings from database
-    const poojaBookings = await prisma.poojaBooking.findMany({
-      where: bookingWhere,
-      orderBy: { [sortBy]: sortOrder },
-      skip,
-      take: limit,
-    })
+    const typeDistribution = typeGroups.map((t) => ({
+      donationType: t.donationType,
+      _count: { id: t._count.id },
+      _sum: { amount: t._sum.amount || 0 },
+    }))
 
-    // Combine donations and bookings, format them consistently
-    const combinedRecords = [
-      ...donations.map(d => ({
-        ...d,
-        type: 'donation',
-        amount: d.amount,
-        userName: d.user?.name || 'Anonymous',
-        userPhone: d.user?.phone || 'N/A',
-        userEmail: d.user?.email || null
-      })),
-      ...poojaBookings.map(b => ({
-        ...b,
-        type: 'pooja',
-        donationType: b.poojaName,
-        donationPurpose: 'Pooja Service',
-        amount: b.poojaPrice,
-        receiptNumber: b.receiptNumber || b.bookingNumber
-      }))
-    ]
-
-    // Sort combined records
-    combinedRecords.sort((a, b) => {
-      if (sortOrder === 'desc') {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      } else {
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      }
-    })
-
-    // Apply pagination to combined records
-    const paginatedRecords = combinedRecords.slice(skip, skip + limit)
-
-    // Calculate totals
-    const totalAmount = combinedRecords.reduce((sum, record) => sum + record.amount, 0)
-    const successfulAmount = combinedRecords
-      .filter(r => r.paymentStatus === 'SUCCESS')
-      .reduce((sum, record) => sum + record.amount, 0)
-
-    // Get status counts
-    const statusCounts = combinedRecords.reduce((acc, record) => {
-      acc[record.paymentStatus] = (acc[record.paymentStatus] || { count: 0, amount: 0 })
-      acc[record.paymentStatus].count += 1
-      acc[record.paymentStatus].amount += record.amount
-      return acc
-    }, {} as Record<string, { count: number; amount: number }>)
-
-    // Get type distribution
-    const typeDistribution = combinedRecords.reduce((acc, record) => {
-      const existingType = acc.find(t => t.donationType === record.donationType)
-      if (existingType) {
-        existingType._count.id += 1
-        existingType._sum.amount = (existingType._sum.amount || 0) + record.amount
-      } else {
-        acc.push({
-          donationType: record.donationType,
-          _count: { id: 1 },
-          _sum: { amount: record.amount }
-        })
-      }
-      return acc
-    }, [] as any[])
+    const totalAmount = totalsAgg._sum.amount || 0
+    const successfulAmount = successAgg._sum.amount || 0
 
     return NextResponse.json({
-      donations: paginatedRecords,
+      donations: projected,
       pagination: {
         page,
         limit,
-        total: combinedRecords.length,
-        totalPages: Math.ceil(combinedRecords.length / limit)
+        total,
+        totalPages: Math.ceil(total / limit),
       },
       statusCounts,
       typeDistribution,
       totals: {
         totalAmount,
         successfulAmount,
-        pendingAmount: totalAmount - successfulAmount
-      }
+        pendingAmount: totalAmount - successfulAmount,
+      },
     })
   } catch (error) {
-    console.error('Error fetching donations:', error)
+    console.error('[admin/donations] GET failed:', error)
     return NextResponse.json(
       { error: 'Failed to fetch donations' },
       { status: 500 }
@@ -198,44 +156,37 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { donationId, action } = body
+    const body = await request.json().catch(() => null)
+    const parsed = donationActionSchema.safeParse(body)
 
-    if (!donationId || !action) {
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Donation ID and action are required' },
+        { error: 'Invalid input', details: parsed.error.format() },
         { status: 400 }
       )
     }
 
-    let updateData: any = {}
+    const { donationId, action } = parsed.data
+
+    let updateData: Prisma.DonationUpdateInput = {}
 
     switch (action) {
       case 'confirm':
-        updateData = {
-          paymentStatus: 'SUCCESS'
-        }
+        updateData = { paymentStatus: 'SUCCESS' }
         break
       case 'fail':
-        updateData = {
-          paymentStatus: 'FAILED'
-        }
+        updateData = { paymentStatus: 'FAILED' }
         break
-      default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        )
     }
 
     const donation = await prisma.donation.update({
       where: { id: donationId },
-      data: updateData
+      data: updateData,
     })
 
     return NextResponse.json(donation)
   } catch (error) {
-    console.error('Error updating donation:', error)
+    console.error('[admin/donations] PATCH failed:', error)
     return NextResponse.json(
       { error: 'Failed to update donation' },
       { status: 500 }

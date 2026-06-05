@@ -23,19 +23,15 @@ function ConfirmationContent() {
 
   useEffect(() => {
     const storedDetails = sessionStorage.getItem('pariharaBookingDetails')
-    console.log('📦 Retrieved from sessionStorage:', storedDetails)
 
     if (storedDetails) {
       try {
         const details = JSON.parse(storedDetails)
-        console.log('✅ Parsed booking details:', details)
         setBookingDetails(details)
       } catch (error) {
-        console.error('❌ Error parsing booking details:', error)
+        console.error('Error parsing booking details:', error)
       }
     } else if (bookingNumber) {
-      // Fallback if sessionStorage is empty
-      console.log('⚠️ No sessionStorage found, using fallback')
       setBookingDetails({
         bookingNumber,
         poojaName: 'Parihara Pooja',

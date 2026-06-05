@@ -32,10 +32,11 @@ export default function GalleryPage() {
         <div className="flex items-center gap-4 mb-8">
           <Link
             href="/"
-            className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+            className="inline-flex items-center gap-2 text-temple-maroon hover:text-temple-gold transition-colors"
             title="Back to home"
           >
-            <ArrowLeft className="w-6 h-6 text-temple-maroon" />
+            <ArrowLeft className="w-5 h-5" />
+            <span className="font-medium">Back to Home</span>
           </Link>
           <div>
             <h1 className="font-cinzel text-3xl sm:text-4xl font-bold text-temple-maroon">

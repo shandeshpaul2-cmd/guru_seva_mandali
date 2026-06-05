@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { X, Trash2, Eye, EyeOff } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/shared/components/ui/Button'
 import type { GalleryItem } from './types'
 import { formatBytes, formatDate } from './utils'
@@ -45,12 +46,18 @@ export function EditDrawer({ item, onClose, onSaved, onDeleted }: EditDrawerProp
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ caption: caption.trim() || null, isPublished }),
       })
-      if (!res.ok) throw new Error('Failed to save changes')
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        throw new Error(data?.error ?? 'Failed to save changes')
+      }
       const updated: GalleryItem = await res.json()
       onSaved(updated)
+      toast.success('Changes saved')
       onClose()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save')
+      const message = err instanceof Error ? err.message : 'Failed to save'
+      setError(message)
+      toast.error(message)
     } finally {
       setIsSaving(false)
     }
@@ -61,11 +68,17 @@ export function EditDrawer({ item, onClose, onSaved, onDeleted }: EditDrawerProp
     setError(null)
     try {
       const res = await fetch(`/api/admin/gallery/${item.id}`, { method: 'DELETE' })
-      if (!res.ok) throw new Error('Failed to delete image')
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        throw new Error(data?.error ?? 'Failed to delete image')
+      }
       onDeleted(item.id)
+      toast.success('Image deleted')
       onClose()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete')
+      const message = err instanceof Error ? err.message : 'Failed to delete'
+      setError(message)
+      toast.error(message)
       setIsDeleting(false)
     }
   }

@@ -11,6 +11,7 @@ import {
 } from '@dnd-kit/core'
 import { SortableContext, arrayMove, rectSortingStrategy } from '@dnd-kit/sortable'
 import { Search, Image as ImageIcon } from 'lucide-react'
+import { toast } from 'sonner'
 import { Input } from '@/shared/components/ui/Input'
 import { GalleryCard } from './GalleryCard'
 import type { GalleryItem, LibraryFilter } from './types'
@@ -61,13 +62,21 @@ export function ManageTab({ items, isLoading, onReorder, onSelect }: ManageTabPr
     onReorder(next)
 
     try {
-      await fetch('/api/admin/gallery/reorder', {
+      const res = await fetch('/api/admin/gallery/reorder', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ids: next.map((i) => i.id) }),
       })
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        onReorder(items)
+        toast.error(data?.error ?? 'Failed to save new order')
+        return
+      }
+      toast.success('Order saved')
     } catch {
       onReorder(items)
+      toast.error('Failed to save new order')
     }
   }
 

@@ -11,11 +11,6 @@ export async function handleDonation(ctx: HandlerContext): Promise<NextResponse>
   const { body, receiptNumber, finalPaymentId, userId, timestamp } = ctx
   const { userInfo, items, amount } = body
 
-  console.log('🎯 DONATION CASE TRIGGERED - Starting donation processing')
-  console.log('User Info:', userInfo)
-  console.log('Amount:', amount)
-  console.log('Items:', items)
-
   try {
     // Create donation record
     const donation = await prisma.donation.create({
@@ -81,16 +76,12 @@ async function sendDonationNotifications(
   finalPaymentId: string,
   timestamp: number
 ): Promise<void> {
-  console.log('🚀 STARTING WHATSAPP NOTIFICATION PROCESS')
-
   try {
     // Generate PDF certificate DIRECTLY (avoid HTTP call which fails on localhost)
     let certificateUrl: string | undefined
     let pdfBase64: string | undefined
 
     try {
-      console.log('📄 Starting certificate generation for donation:', donation.receiptNumber)
-
       // Import generator and cache directly - no HTTP call needed
       const { nodeCertificateGenerator } = await import('@/lib/certificate-generator-node')
       const { storePDFTemporarily } = await import('@/lib/pdf-cache')
@@ -105,25 +96,20 @@ async function sendDonationNotifications(
       }
 
       // Generate PDF directly using Puppeteer (no HTTP call)
-      console.log('📄 Generating PDF with Puppeteer...')
       const pdfBuffer = await nodeCertificateGenerator.generate(certificateData)
       pdfBase64 = pdfBuffer.toString('base64')
-      console.log('✅ PDF generated, size:', Math.round(pdfBuffer.length / 1024), 'KB')
 
       // Store in cache for download link
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
       const filename = `certificate_${donation.receiptNumber}.pdf`
       const pdfId = storePDFTemporarily(pdfBase64, filename)
       certificateUrl = `${baseUrl}/api/certificates/serve/${pdfId}`
-
-      console.log('✅ Certificate generated and cached:', certificateUrl)
     } catch (certificateError) {
-      console.error('❌ Error generating certificate:', certificateError)
+      console.error('Error generating certificate:', certificateError)
       // Continue without certificate - WhatsApp will use fallback message
     }
 
     // Send WhatsApp notification
-    console.log('📱 Sending donation receipt with template to:', userInfo.phoneNumber)
     const formattedPhone = userInfo.phoneNumber.startsWith('+')
       ? userInfo.phoneNumber
       : `+91${userInfo.phoneNumber}`
@@ -140,24 +126,15 @@ async function sendDonationNotifications(
       pdfBase64
     )
 
-    console.log('📱 WhatsApp result:', {
-      success: whatsappResult.success,
-      error: whatsappResult.error,
-      receiptMessageId: whatsappResult.receiptMessageId,
-      adminMessageId: whatsappResult.adminMessageId
-    })
-
-    if (whatsappResult.success) {
-      console.log('✅ Donation WhatsApp notifications sent successfully with certificate')
-    } else {
-      console.error('❌ WhatsApp notifications failed:', whatsappResult.error)
+    if (!whatsappResult.success) {
+      console.error('WhatsApp notifications failed:', whatsappResult.error)
     }
 
     // Send email notifications
     await sendDonationEmails(donation, userInfo, certificateUrl)
 
   } catch (error) {
-    console.error('❌ CRITICAL ERROR in donation notifications:', error)
+    console.error('CRITICAL ERROR in donation notifications:', error)
   }
 }
 
@@ -190,28 +167,9 @@ async function sendDonationEmails(
         certificateUrl
       )
 
-      if (emailResult.success) {
-        console.log('Donation receipt email sent successfully to:', donorEmail)
-      } else {
+      if (!emailResult.success) {
         console.error('Failed to send donation receipt email:', emailResult.error)
       }
-    }
-
-    // Send notification email to admin
-    const adminEmailResult = await EmailService.sendDonationNotificationToAdmin(
-      userInfo.fullName,
-      donation.amount,
-      donation.receiptNumber,
-      donation.donationType,
-      'No email required',
-      userInfo.phoneNumber,
-      ''
-    )
-
-    if (adminEmailResult.success) {
-      console.log('Donation notification email sent to admin successfully')
-    } else {
-      console.error('Failed to send donation notification email to admin:', adminEmailResult.error)
     }
   } catch (emailError) {
     console.error('Email notifications failed:', emailError)

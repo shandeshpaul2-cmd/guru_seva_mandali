@@ -12,6 +12,20 @@ export {
   type UserInfo,
 } from './common'
 
+// Admin schemas
+export {
+  adminListQuerySchema,
+  bookingsListQuerySchema,
+  donationsListQuerySchema,
+  dashboardQuerySchema,
+  galleryListQuerySchema,
+  bookingActionSchema,
+  donationActionSchema,
+  type AdminListQuery,
+  type BookingAction,
+  type DonationAction,
+} from './admin'
+
 // Payment schemas
 export {
   paymentTypeSchema,

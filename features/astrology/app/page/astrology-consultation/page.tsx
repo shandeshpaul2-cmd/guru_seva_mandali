@@ -126,64 +126,50 @@ export default function AstrologyConsultationPage() {
   }
 
   const validateForm = () => {
-    console.log('Validating form data:', formData)
     const newErrors: Partial<FormData> = {}
 
     if (!formData.fullName.trim()) {
       newErrors.fullName = t.nameRequired
-      console.log('Name validation failed')
     }
 
     if (!formData.phoneNumber.trim()) {
       newErrors.phoneNumber = t.phoneRequired
-      console.log('Phone number validation failed - empty')
     } else {
-      // More flexible phone validation - accept 6-15 digits
       const cleanPhone = formData.phoneNumber.replace(/\D/g, '')
       if (cleanPhone.length < 6 || cleanPhone.length > 15) {
         newErrors.phoneNumber = t.validPhone
-        console.log('Phone number validation failed - invalid length:', cleanPhone.length)
       }
     }
 
     if (!formData.dateOfBirth) {
       newErrors.dateOfBirth = t.dobRequired
-      console.log('Date of birth validation failed - empty')
     } else {
       const dob = new Date(formData.dateOfBirth)
       const today = new Date()
       if (dob > today) {
         newErrors.dateOfBirth = t.dobFuture
-        console.log('Date of birth validation failed - future date')
       }
     }
 
     if (!formData.timeOfBirth) {
       newErrors.timeOfBirth = t.timeRequired
-      console.log('Time of birth validation failed - empty')
     }
 
     if (!formData.placeOfBirth.trim()) {
       newErrors.placeOfBirth = t.locationRequired
-      console.log('Place of birth validation failed')
     }
 
-    console.log('Validation errors found:', newErrors)
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Astrology consultation form submitted:', formData)
 
     if (!validateForm()) {
-      console.log('Form validation failed:', errors)
       toast.error(t.fillRequiredCorrectly)
       return
     }
-
-    console.log('Form validation passed, processing consultation booking')
 
     try {
       // Generate booking reference number
@@ -208,10 +194,8 @@ export default function AstrologyConsultationPage() {
         throw new Error('Failed to create booking')
       }
 
-      const bookingData = await bookingResponse.json()
-      console.log('Booking created successfully:', bookingData)
+      await bookingResponse.json()
 
-      // Redirect to success page
       router.push(`/astrology-consultation/success?booking=${bookingNumber}`)
     } catch (error) {
       console.error('Consultation booking error:', error)
@@ -360,6 +344,7 @@ export default function AstrologyConsultationPage() {
                       name="dateOfBirth"
                       value={formData.dateOfBirth}
                       onChange={handleDateChange}
+                      aria-label={t.dateOfBirth}
                       max={new Date().toISOString().split('T')[0]}
                       className={`w-full px-3 py-2 rounded-lg border text-base ${
                         errors.dateOfBirth
@@ -458,6 +443,7 @@ export default function AstrologyConsultationPage() {
                       name="starSign"
                       value={formData.starSign}
                       readOnly
+                      aria-label={t.moonSign}
                       placeholder={t.autoCalculated}
                       className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-base font-semibold text-temple-maroon cursor-not-allowed"
                     />

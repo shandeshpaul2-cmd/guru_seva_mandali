@@ -65,13 +65,13 @@ export default function DonatePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50 py-12 px-4">
+    <div className="min-h-screen bg-temple-cream py-12 px-4">
       <div className="max-w-3xl mx-auto">
         {/* Header with Language Selector and Back Button */}
         <div className="flex justify-between items-center mb-6">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-800 transition-colors"
+            className="inline-flex items-center gap-2 text-temple-maroon hover:text-temple-gold transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
             <span className="font-medium">{t.backToHome}</span>
@@ -80,11 +80,11 @@ export default function DonatePage() {
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-6 text-white">
+          <div className="bg-gradient-to-r from-temple-maroon to-red-700 p-6 text-white">
             <h1 className="text-4xl font-bold text-center mb-2">
               {t.makeSacredDonation}
             </h1>
-            <p className="text-center text-orange-100">
+            <p className="text-center text-temple-cream">
               {t.donationSubtitle}
             </p>
           </div>
@@ -98,14 +98,14 @@ export default function DonatePage() {
                  controls
                  className="w-full bg-black"
                >
-                 <source src="/videos/donaiton page vid.mp4" type="video/mp4" />
+                 <source src="/videos/donation-page-vid.mp4" type="video/mp4" />
                  Your browser does not support the video tag.
                </video>
              </div>
 
-             <div className="bg-orange-50 rounded-xl p-6 mb-8">
+             <div className="bg-temple-cream rounded-xl p-6 mb-8 border border-temple-gold/30">
                <div className="text-center mb-3">
-                 <span className="text-lg font-medium text-orange-800">{t.supportDivineService}</span>
+                 <span className="text-lg font-medium text-temple-maroon">{t.supportDivineService}</span>
                </div>
                <p className="text-gray-700 text-center">
                  {t.everyContribution}
@@ -122,7 +122,8 @@ export default function DonatePage() {
                     type="text"
                     value={donorName}
                     onChange={(e) => setDonorName(e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
+                    aria-label={t.fullName}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-temple-gold focus:border-temple-gold transition-all"
                     placeholder={t.enterYourFullName}
                   />
                 </div>
@@ -135,7 +136,8 @@ export default function DonatePage() {
                     type="tel"
                     value={donorPhone}
                     onChange={(e) => setDonorPhone(e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
+                    aria-label={t.phoneNumber}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-temple-gold focus:border-temple-gold transition-all"
                     placeholder={t.enterYourPhone}
                   />
                 </div>
@@ -152,8 +154,8 @@ export default function DonatePage() {
                       onClick={() => setAmount(amt.toString())}
                       className={`px-4 py-3 border-2 rounded-xl text-sm font-semibold transition-all ${
                         amount === amt.toString()
-                          ? 'border-orange-500 bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg'
-                          : 'border-gray-200 hover:border-orange-300 bg-white text-gray-700'
+                          ? 'border-temple-maroon bg-gradient-to-r from-temple-maroon to-red-700 text-white shadow-lg'
+                          : 'border-gray-200 hover:border-temple-gold bg-white text-gray-700'
                       }`}
                     >
                       ₹{amt.toLocaleString('en-IN')}
@@ -165,7 +167,8 @@ export default function DonatePage() {
                     type="number"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all text-center text-lg font-semibold"
+                    aria-label={t.selectDonationAmount}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-temple-gold focus:border-temple-gold transition-all text-center text-lg font-semibold"
                     placeholder={t.enterCustomAmount}
                     min="1"
                   />
@@ -183,10 +186,10 @@ export default function DonatePage() {
               </PaymentLoadingButton>
             </div>
 
-            <div className="mt-8 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-6">
+            <div className="mt-8 bg-temple-cream rounded-xl p-6 border border-temple-gold/30">
               <div className="flex items-center justify-center mb-4">
                 <span className="text-2xl">📜</span>
-                <h3 className="font-bold text-orange-800 ml-3 text-lg">{t.divineAcknowledgments}</h3>
+                <h3 className="font-bold text-temple-maroon ml-3 text-lg">{t.divineAcknowledgments}</h3>
               </div>
               <div className="space-y-3">
                 <div className="flex items-start">

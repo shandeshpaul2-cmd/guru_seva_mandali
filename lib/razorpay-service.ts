@@ -22,15 +22,16 @@ class RazorpayService {
   private razorpay: Razorpay
 
   constructor() {
-    // Initialize Razorpay with your key ID and secret
-    // In production, these should be environment variables
-    // IMPORTANT: Trim the keys to remove any whitespace/newlines
-    const keyId = (process.env.RAZORPAY_KEY_ID || 'rzp_test_XXXXXXXXXXXX').trim()
-    const keySecret = (process.env.RAZORPAY_KEY_SECRET || 'your_key_secret').trim()
-
-    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-      console.warn('⚠️ Razorpay credentials not configured. Using test credentials.')
+    if (!process.env.RAZORPAY_KEY_ID) {
+      throw new Error('RAZORPAY_KEY_ID is required')
     }
+    if (!process.env.RAZORPAY_KEY_SECRET) {
+      throw new Error('RAZORPAY_KEY_SECRET is required')
+    }
+
+    // IMPORTANT: Trim the keys to remove any whitespace/newlines
+    const keyId = process.env.RAZORPAY_KEY_ID.trim()
+    const keySecret = process.env.RAZORPAY_KEY_SECRET.trim()
 
     this.razorpay = new Razorpay({
       key_id: keyId,
@@ -66,7 +67,10 @@ class RazorpayService {
 
       // Create the expected signature
       // IMPORTANT: Trim the key secret to remove any whitespace/newlines
-      const keySecret = (process.env.RAZORPAY_KEY_SECRET || 'your_key_secret').trim()
+      if (!process.env.RAZORPAY_KEY_SECRET) {
+        throw new Error('RAZORPAY_KEY_SECRET is required')
+      }
+      const keySecret = process.env.RAZORPAY_KEY_SECRET.trim()
       const expectedSignature = crypto
         .createHmac('sha256', keySecret)
         .update(`${razorpay_order_id}|${razorpay_payment_id}`)

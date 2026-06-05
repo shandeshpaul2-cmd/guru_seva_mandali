@@ -14,9 +14,12 @@ import {
   Eye,
   MoreVertical,
   RefreshCw,
-  Heart
+  Heart,
+  X
 } from 'lucide-react'
+import { toast } from 'sonner'
 import { useAdminAuth } from '@/shared/admin/contexts/AdminAuthContext'
+import { useDebouncedValue } from '@/shared/hooks/useDebouncedValue'
 
 interface Donation {
   id: string
@@ -64,12 +67,14 @@ export default function AdminDonations() {
   const { logout } = useAdminAuth()
   const [donations, setDonations] = useState<Donation[]>([])
   const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
+  const [searchInput, setSearchInput] = useState('')
+  const search = useDebouncedValue(searchInput, 300)
   const [statusFilter, setStatusFilter] = useState('all')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
   const [statusCounts, setStatusCounts] = useState<Record<string, { count: number; amount: number }>>({})
   const [typeDistribution, setTypeDistribution] = useState<DonationsResponse['typeDistribution']>([])
   const [totals, setTotals] = useState<DonationsResponse['totals']>({
@@ -107,6 +112,7 @@ export default function AdminDonations() {
         const data: DonationsResponse = await response.json()
         setDonations(data.donations)
         setTotalPages(data.pagination.totalPages)
+        setTotalCount(data.pagination.total)
         setStatusCounts(data.statusCounts)
         setTypeDistribution(data.typeDistribution)
         setTotals(data.totals)
@@ -129,13 +135,21 @@ export default function AdminDonations() {
         })
       })
 
+      const data = await response.json().catch(() => null)
+
       if (response.ok) {
+        toast.success(
+          action === 'confirm' ? 'Donation confirmed' : 'Donation marked as failed'
+        )
         fetchDonations() // Refresh the list
         setShowActionModal(false)
         setSelectedDonation(null)
+      } else {
+        toast.error(data?.error ?? 'Action failed')
       }
     } catch (error) {
       console.error('Error updating donation:', error)
+      toast.error('Action failed')
     }
   }
 
@@ -184,12 +198,15 @@ export default function AdminDonations() {
   }
 
   const clearFilters = () => {
-    setSearch('')
+    setSearchInput('')
     setStatusFilter('all')
     setStartDate('')
     setEndDate('')
     setCurrentPage(1)
   }
+
+  const hasActiveFilters =
+    Boolean(searchInput) || statusFilter !== 'all' || Boolean(startDate) || Boolean(endDate)
 
   return (
     <div>
@@ -271,9 +288,9 @@ export default function AdminDonations() {
               <input
                 type="text"
                 placeholder="Search donor name, phone, receipt..."
-                value={search}
+                value={searchInput}
                 onChange={(e) => {
-                  setSearch(e.target.value)
+                  setSearchInput(e.target.value)
                   setCurrentPage(1)
                 }}
                 className="w-full pl-10 pr-4 py-2 text-sm border border-temple-gold/20 rounded-xl focus:ring-2 focus:ring-temple-gold focus:border-temple-gold transition-all duration-200"
@@ -336,8 +353,17 @@ export default function AdminDonations() {
                   </tr>
                 ) : donations.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
-                      <p className="text-sm font-medium">No donations found</p>
+                    <td colSpan={5} className="px-4 py-12 text-center text-gray-500">
+                      <p className="text-sm font-medium">No donations found.</p>
+                      {hasActiveFilters && (
+                        <button
+                          type="button"
+                          onClick={clearFilters}
+                          className="mt-2 text-xs text-temple-maroon hover:text-temple-gold underline"
+                        >
+                          Clear filters
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ) : (
@@ -411,8 +437,8 @@ export default function AdminDonations() {
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-xs text-gray-600">
               Showing {((currentPage - 1) * itemsPerPage) + 1} to{' '}
-              {Math.min(currentPage * itemsPerPage, donations.length)} of{' '}
-              {Object.values(statusCounts).reduce((sum, item) => sum + item.count, 0)} donations
+              {Math.min(currentPage * itemsPerPage, totalCount)} of{' '}
+              {totalCount} donations
             </div>
             <div className="flex items-center gap-1">
               <button
@@ -455,8 +481,10 @@ export default function AdminDonations() {
               <button
                 onClick={() => setShowActionModal(false)}
                 className="text-gray-400 hover:text-gray-600"
+                aria-label="Close"
+                title="Close"
               >
-                <XCircle className="w-4 h-4" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
@@ -503,8 +531,10 @@ export default function AdminDonations() {
                 <button
                   onClick={() => setShowDetailsModal(false)}
                   className="text-white/80 hover:text-white"
+                  aria-label="Close"
+                  title="Close"
                 >
-                  <XCircle className="w-4 h-4" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
             </div>

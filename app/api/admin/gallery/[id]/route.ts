@@ -40,7 +40,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       fullUrl: buildFullUrl(item.cloudinaryId),
     })
   } catch (error) {
-    console.error('Error updating gallery item:', error)
+    console.error('[admin/gallery/:id] PATCH failed:', error)
     return NextResponse.json(
       { error: 'Failed to update gallery item' },
       { status: 500 }
@@ -64,7 +64,7 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
       await deleteAsset(item.cloudinaryId)
     } catch (cloudinaryError) {
       console.error(
-        'Cloudinary delete failed (continuing with DB delete):',
+        '[admin/gallery/:id] Cloudinary delete failed (continuing with DB delete):',
         cloudinaryError
       )
     }
@@ -73,7 +73,7 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
 
     return NextResponse.json({ ok: true })
   } catch (error) {
-    console.error('Error deleting gallery item:', error)
+    console.error('[admin/gallery/:id] DELETE failed:', error)
     return NextResponse.json(
       { error: 'Failed to delete gallery item' },
       { status: 500 }

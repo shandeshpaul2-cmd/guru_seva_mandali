@@ -73,7 +73,6 @@ async function sendAstrologyNotifications(
 ): Promise<void> {
   // Send WhatsApp notification
   try {
-    console.log('📱 Sending astrology consultation confirmation with template')
     const formattedPhone = userInfo.phoneNumber.startsWith('+')
       ? userInfo.phoneNumber
       : `+91${userInfo.phoneNumber}`
@@ -91,13 +90,11 @@ async function sendAstrologyNotifications(
       serviceDetails?.preferredTime
     )
 
-    if (whatsappResult.success) {
-      console.log('✅ Astrology consultation WhatsApp notifications sent with templates')
-    } else {
-      console.error('❌ Astrology consultation template failed:', whatsappResult.error)
+    if (!whatsappResult.success) {
+      console.error('Astrology consultation template failed:', whatsappResult.error)
     }
   } catch (error) {
-    console.error('❌ Failed to send astrology consultation WhatsApp notifications:', error)
+    console.error('Failed to send astrology consultation WhatsApp notifications:', error)
   }
 
   // Send email notifications
@@ -113,9 +110,7 @@ async function sendAstrologyNotifications(
         amount
       )
 
-      if (emailResult.success) {
-        console.log('Astrology consultation confirmation email sent successfully to:', clientEmail)
-      } else {
+      if (!emailResult.success) {
         console.error('Failed to send astrology consultation confirmation email:', emailResult.error)
       }
     }
@@ -131,9 +126,7 @@ async function sendAstrologyNotifications(
       serviceDetails?.birthDetails
     )
 
-    if (adminEmailResult.success) {
-      console.log('Astrology consultation notification email sent to admin successfully')
-    } else {
+    if (!adminEmailResult.success) {
       console.error('Failed to send astrology consultation notification email to admin:', adminEmailResult.error)
     }
   } catch (emailError) {

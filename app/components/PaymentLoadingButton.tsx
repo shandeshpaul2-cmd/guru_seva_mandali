@@ -41,8 +41,8 @@ export default function PaymentLoadingButton({
       disabled={disabled || isLoading}
       className={`
         relative inline-flex items-center justify-center px-6 py-3 border border-transparent
-        text-base font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700
-        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500
+        text-base font-medium rounded-md text-white bg-gradient-to-r from-temple-maroon to-red-700 hover:from-temple-maroon hover:to-red-800
+        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-temple-gold
         disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200
         ${className}
       `}

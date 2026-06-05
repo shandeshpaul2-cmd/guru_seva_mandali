@@ -192,6 +192,7 @@ export default function BookPoojaPage() {
                     type="text"
                     value={devoteeName}
                     onChange={(e) => setDevoteeName(e.target.value)}
+                    aria-label={t.fullName}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-temple-gold focus:border-transparent"
                     placeholder={t.enterYourFullName}
                   />
@@ -205,6 +206,7 @@ export default function BookPoojaPage() {
                     type="tel"
                     value={devoteePhone}
                     onChange={(e) => setDevoteePhone(e.target.value)}
+                    aria-label={t.phoneNumber}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-temple-gold focus:border-transparent"
                     placeholder={t.enterYourPhone}
                   />
@@ -218,6 +220,7 @@ export default function BookPoojaPage() {
                     type="date"
                     value={preferredDate}
                     onChange={(e) => setPreferredDate(e.target.value)}
+                    aria-label={t.preferredDate}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-temple-gold focus:border-transparent"
                   />
                 </div>
@@ -293,6 +296,7 @@ export default function BookPoojaPage() {
                     type="text"
                     value={gotra}
                     onChange={(e) => setGotra(e.target.value)}
+                    aria-label={t.gotra}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-temple-gold focus:border-transparent"
                     placeholder={t.enterGotra}
                   />

@@ -13,9 +13,12 @@ import {
   XCircle,
   AlertCircle,
   MoreVertical,
-  RefreshCw
+  RefreshCw,
+  X
 } from 'lucide-react'
+import { toast } from 'sonner'
 import { useAdminAuth } from '@/shared/admin/contexts/AdminAuthContext'
+import { useDebouncedValue } from '@/shared/hooks/useDebouncedValue'
 
 interface Booking {
   id: string
@@ -59,11 +62,13 @@ export default function AdminBookings() {
   const { logout } = useAdminAuth()
   const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
+  const [searchInput, setSearchInput] = useState('')
+  const search = useDebouncedValue(searchInput, 300)
   const [statusFilter, setStatusFilter] = useState('all')
   const [typeFilter, setTypeFilter] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
   const [statusCounts, setStatusCounts] = useState<Record<string, number>>({})
   const [typeCounts, setTypeCounts] = useState<Record<string, number>>({})
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
@@ -99,6 +104,7 @@ export default function AdminBookings() {
 
         setBookings(filteredBookings)
         setTotalPages(data.pagination.totalPages)
+        setTotalCount(data.pagination.total)
         setStatusCounts(data.statusCounts)
         setTypeCounts(data.typeCounts || {})
       }
@@ -121,13 +127,27 @@ export default function AdminBookings() {
         })
       })
 
+      const data = await response.json().catch(() => null)
+
       if (response.ok) {
+        const message =
+          action === 'confirm'
+            ? 'Booking confirmed'
+            : action === 'complete'
+              ? 'Booking marked as completed'
+              : action === 'cancel'
+                ? 'Booking cancelled'
+                : 'Booking updated'
+        toast.success(message)
         fetchBookings() // Refresh the list
         setShowActionModal(false)
         setSelectedBooking(null)
+      } else {
+        toast.error(data?.error ?? 'Action failed')
       }
     } catch (error) {
       console.error('Error updating booking:', error)
+      toast.error('Action failed')
     }
   }
 
@@ -181,6 +201,16 @@ export default function AdminBookings() {
       default:
         return 'bg-blue-100 text-blue-800 border-blue-200'
     }
+  }
+
+  const hasActiveFilters =
+    Boolean(searchInput) || statusFilter !== 'all' || typeFilter !== 'all'
+
+  const clearFilters = () => {
+    setSearchInput('')
+    setStatusFilter('all')
+    setTypeFilter('all')
+    setCurrentPage(1)
   }
 
   const getTypeName = (type?: string) => {
@@ -293,9 +323,9 @@ export default function AdminBookings() {
               <input
                 type="text"
                 placeholder="Search devotee name, phone, booking number..."
-                value={search}
+                value={searchInput}
                 onChange={(e) => {
-                  setSearch(e.target.value)
+                  setSearchInput(e.target.value)
                   setCurrentPage(1)
                 }}
                 className="w-full pl-10 pr-4 py-2 text-sm border border-temple-gold/20 rounded-xl focus:ring-2 focus:ring-temple-gold focus:border-temple-gold transition-all duration-200"
@@ -366,8 +396,17 @@ export default function AdminBookings() {
                   </tr>
                 ) : bookings.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
-                      <p className="text-sm font-medium">No bookings found</p>
+                    <td colSpan={5} className="px-4 py-12 text-center text-gray-500">
+                      <p className="text-sm font-medium">No bookings found.</p>
+                      {hasActiveFilters && (
+                        <button
+                          type="button"
+                          onClick={clearFilters}
+                          className="mt-2 text-xs text-temple-maroon hover:text-temple-gold underline"
+                        >
+                          Clear filters
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ) : (
@@ -461,8 +500,8 @@ export default function AdminBookings() {
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-xs text-gray-600">
               Showing {((currentPage - 1) * itemsPerPage) + 1} to{' '}
-              {Math.min(currentPage * itemsPerPage, bookings.length)} of{' '}
-              {Object.values(statusCounts).reduce((sum, count) => sum + count, 0)} bookings
+              {Math.min(currentPage * itemsPerPage, totalCount)} of{' '}
+              {totalCount} bookings
             </div>
             <div className="flex items-center gap-1">
               <button
@@ -505,8 +544,10 @@ export default function AdminBookings() {
               <button
                 onClick={() => setShowActionModal(false)}
                 className="text-temple-gold/60 hover:text-temple-maroon transition-colors"
+                aria-label="Close"
+                title="Close"
               >
-                <XCircle className="w-4 h-4" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 

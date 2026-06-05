@@ -13,7 +13,6 @@ import {
   X
 } from 'lucide-react'
 import { AdminAuthProvider, useAdminAuth } from '@/shared/admin/contexts/AdminAuthContext'
-import Footer from '@/shared/components/common/Footer'
 
 interface AdminLayoutProps {
   children: React.ReactNode
@@ -111,17 +110,26 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
 
           <nav className="mt-6 flex-1 overflow-y-auto">
             <div className="px-4">
-              {menuItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="flex items-center gap-3 px-4 py-3 mb-2 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
-                  onClick={() => setIsSidebarOpen(false)}
-                >
-                  <item.icon className="w-5 h-5" />
-                  <span>{item.label}</span>
-                </Link>
-              ))}
+              {menuItems.map((item) => {
+                const isActive =
+                  pathname === item.href || pathname.startsWith(item.href + '/')
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={isActive ? 'page' : undefined}
+                    className={`flex items-center gap-3 px-4 py-3 mb-2 rounded-lg transition-colors ${
+                      isActive
+                        ? 'bg-temple-maroon/10 text-temple-maroon font-semibold border-l-4 border-temple-maroon'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                    onClick={() => setIsSidebarOpen(false)}
+                  >
+                    <item.icon className="w-5 h-5" />
+                    <span>{item.label}</span>
+                  </Link>
+                )
+              })}
             </div>
           </nav>
 
@@ -154,10 +162,8 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
               <Menu className="w-5 h-5" />
             </button>
 
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">
-                Welcome back, {admin?.name}
-              </span>
+            <div className="flex items-center">
+              <span className="text-sm text-gray-600">Welcome, Admin</span>
             </div>
           </div>
         </header>
@@ -167,8 +173,10 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
           {children}
         </main>
 
-        {/* Footer */}
-        <Footer />
+        {/* Admin footer */}
+        <footer className="border-t border-gray-200 p-4 text-center text-xs text-gray-500">
+          Admin Panel · Sri Raghavendra Brindavana Sannidhi
+        </footer>
       </div>
     </div>
   )

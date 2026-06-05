@@ -19,8 +19,6 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Google API for Sign-In */}
-        <script src="https://apis.google.com/js/platform.js" async defer></script>
       </head>
       <body className="min-h-screen flex flex-col">
         <Providers>

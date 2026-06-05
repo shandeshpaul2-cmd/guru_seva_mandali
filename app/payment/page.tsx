@@ -3,6 +3,7 @@
 import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import Script from 'next/script'
 import { ArrowLeft } from 'lucide-react'
 import PaymentPortal from '@/features/payments/components/payment/PaymentPortal'
 
@@ -113,6 +114,7 @@ function PaymentContent() {
 
   return (
     <div className="min-h-screen">
+      <Script src="https://apis.google.com/js/platform.js" strategy="lazyOnload" />
       <PaymentPortal
         items={paymentItems}
         userInfo={userInfo}

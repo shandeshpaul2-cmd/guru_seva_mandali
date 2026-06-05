@@ -255,6 +255,7 @@ export default function PariharaPoojaPage() {
                       type="text"
                       value={devoteeName}
                       onChange={(e) => setDevoteeName(e.target.value)}
+                      aria-label={t.fullName}
                       className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-temple-gold focus:outline-none transition-colors"
                       placeholder={t.enterYourFullName}
                     />
@@ -268,6 +269,7 @@ export default function PariharaPoojaPage() {
                       type="tel"
                       value={devoteePhone}
                       onChange={(e) => setDevoteePhone(e.target.value)}
+                      aria-label={t.phoneNumber}
                       className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-temple-gold focus:outline-none transition-colors"
                       placeholder={t.enterYourPhone}
                     />
