@@ -52,24 +52,24 @@ export async function GET(_request: NextRequest) {
         prisma.$queryRaw<DonationAggRow[]>`
           SELECT
             COUNT(*) AS total_count,
-            COUNT(*) FILTER (WHERE created_at >= ${todayStart}) AS today_count,
-            COUNT(*) FILTER (WHERE created_at >= ${weekStart}) AS week_count,
-            COUNT(*) FILTER (WHERE created_at >= ${monthStart}) AS month_count,
-            COUNT(*) FILTER (WHERE created_at >= ${yearStart}) AS year_count,
-            COALESCE(SUM(amount) FILTER (WHERE payment_status = 'SUCCESS'), 0) AS total_revenue,
-            COALESCE(SUM(amount) FILTER (WHERE payment_status = 'SUCCESS' AND created_at >= ${todayStart}), 0) AS today_revenue,
-            COALESCE(SUM(amount) FILTER (WHERE payment_status = 'SUCCESS' AND created_at >= ${weekStart}), 0) AS week_revenue,
-            COALESCE(SUM(amount) FILTER (WHERE payment_status = 'SUCCESS' AND created_at >= ${monthStart}), 0) AS month_revenue,
-            COALESCE(SUM(amount) FILTER (WHERE payment_status = 'SUCCESS' AND created_at >= ${yearStart}), 0) AS year_revenue
+            COUNT(*) FILTER (WHERE "createdAt" >= ${todayStart}) AS today_count,
+            COUNT(*) FILTER (WHERE "createdAt" >= ${weekStart}) AS week_count,
+            COUNT(*) FILTER (WHERE "createdAt" >= ${monthStart}) AS month_count,
+            COUNT(*) FILTER (WHERE "createdAt" >= ${yearStart}) AS year_count,
+            COALESCE(SUM(amount) FILTER (WHERE "paymentStatus" = 'SUCCESS'), 0) AS total_revenue,
+            COALESCE(SUM(amount) FILTER (WHERE "paymentStatus" = 'SUCCESS' AND "createdAt" >= ${todayStart}), 0) AS today_revenue,
+            COALESCE(SUM(amount) FILTER (WHERE "paymentStatus" = 'SUCCESS' AND "createdAt" >= ${weekStart}), 0) AS week_revenue,
+            COALESCE(SUM(amount) FILTER (WHERE "paymentStatus" = 'SUCCESS' AND "createdAt" >= ${monthStart}), 0) AS month_revenue,
+            COALESCE(SUM(amount) FILTER (WHERE "paymentStatus" = 'SUCCESS' AND "createdAt" >= ${yearStart}), 0) AS year_revenue
           FROM donations
         `,
         prisma.$queryRaw<BookingAggRow[]>`
           SELECT
             COUNT(*) AS total_count,
-            COUNT(*) FILTER (WHERE created_at >= ${todayStart}) AS today_count,
-            COUNT(*) FILTER (WHERE created_at >= ${weekStart}) AS week_count,
-            COUNT(*) FILTER (WHERE created_at >= ${monthStart}) AS month_count,
-            COUNT(*) FILTER (WHERE created_at >= ${yearStart}) AS year_count
+            COUNT(*) FILTER (WHERE "createdAt" >= ${todayStart}) AS today_count,
+            COUNT(*) FILTER (WHERE "createdAt" >= ${weekStart}) AS week_count,
+            COUNT(*) FILTER (WHERE "createdAt" >= ${monthStart}) AS month_count,
+            COUNT(*) FILTER (WHERE "createdAt" >= ${yearStart}) AS year_count
           FROM pooja_bookings
         `,
         prisma.donation.findMany({
